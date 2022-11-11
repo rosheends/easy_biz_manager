@@ -3,13 +3,14 @@ import 'package:easy_biz_manager/manage_expenses.dart';
 import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/reporting.dart';
 import 'package:flutter/material.dart';
-import 'manage_projects.dart';
+import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'app_drawer.dart';
-import 'manage_clients.dart';
+import '../../app_drawer.dart';
+import '../../manage_clients.dart';
+import '../../utility/constants.dart';
 
-class HomeWidget extends StatelessWidget {
-  HomeWidget({Key? key}) : super(key: key);
+class WebHomeWidget extends StatelessWidget {
+  WebHomeWidget({Key? key}) : super(key: key);
 
   List<Item> items = [
     Item(
@@ -42,13 +43,14 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text(Constants.appName),
+
       ),
       body: GridView.count(
-          padding: const EdgeInsets.fromLTRB(5, 50, 5, 0),
-          crossAxisCount: 2,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
+          padding: const EdgeInsets.all(50),
+          crossAxisCount: 4,
+          crossAxisSpacing: 20.0,
+          mainAxisSpacing: 20.0,
           children: items.map((data) {
             return GestureDetector(
               onTap: () {
@@ -66,19 +68,19 @@ class HomeWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      margin: const EdgeInsets.all(20),
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(30),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(width: 3, color: Colors.white)),
+                          color: Colors.white
+                      ),
                       child: Icon(
                         data.icon,
-                        size: 45.0,
+                        size: 65.0,
                         color: Colors.blue,
                       ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 40,
                     ),
                     Text(
                       data.title,
@@ -86,7 +88,7 @@ class HomeWidget extends StatelessWidget {
                           textStyle: TextStyle(
                               color: Colors.blue[900],
                               fontSize: 15,
-                              fontWeight: FontWeight.w500)),
+                              fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),

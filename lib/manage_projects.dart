@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
-import 'home_page.dart';
+import 'views/mobile/mobile_home.dart';
 
 // Future<http.Response> fetchProductList() {
 //   return http.get(Uri.parse('http://localhost:8080/api/v1/management/project/'));
@@ -284,7 +284,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HomeWidget()),
+                            builder: (context) => MobileHomeWidget()),
                       );
                     })),
           ])),

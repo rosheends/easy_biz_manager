@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import '../mobile/mobile_home.dart';
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({Key? key}) : super(key: key);
@@ -110,7 +110,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeWidget()),
+                      MaterialPageRoute(builder: (context) => MobileHomeWidget()),
                     );
                     // call validate function
                   },

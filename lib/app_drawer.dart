@@ -1,6 +1,7 @@
 import 'package:easy_biz_manager/manage_products.dart';
 import 'package:easy_biz_manager/manage_projects.dart';
 import 'package:easy_biz_manager/reporting.dart';
+import 'package:easy_biz_manager/utility/constants.dart';
 import 'package:flutter/material.dart';
 import 'manage_projects.dart';
 import 'manage_clients.dart';
@@ -8,7 +9,7 @@ import 'manage_expenses.dart';
 import 'manage_invoices.dart';
 import 'reporting.dart';
 import 'manage_products.dart';
-import 'home_page.dart';
+import 'views/mobile/mobile_home.dart';
 
 class AppDrawerWidget extends StatelessWidget {
   const AppDrawerWidget({Key? key}) : super(key: key);
@@ -26,23 +27,25 @@ class AppDrawerWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.blue,
                 ),
-                child: Text(''),
+                child: Text(Constants.appName, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w700),),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.dashboard),
               iconColor: Colors.blue,
-              title: const Text('Dashboard'),
+              horizontalTitleGap: 0,
+              title: const Text('Home'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeWidget()),
+                  MaterialPageRoute(builder: (context) => MobileHomeWidget()),
                 );
               },
             ),
             ListTile(
               leading: const Icon(Icons.ballot_rounded),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Products'),
               onTap: () {
                 Navigator.push(
@@ -54,6 +57,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.description_outlined),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Projects'),
               onTap: () {
                 Navigator.push(
@@ -65,6 +69,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.people),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Clients'),
               onTap: () {
                 Navigator.push(
@@ -76,6 +81,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.people_outline),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Vendors'),
               onTap: () {
                 // Update the state of the app.
@@ -85,6 +91,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.paid_rounded),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Expenses'),
               onTap: () {
                 Navigator.push(
@@ -96,6 +103,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.document_scanner_outlined),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Invoices'),
               onTap: () {
                 Navigator.push(
@@ -107,6 +115,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.insert_chart),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Reports'),
               onTap: () {
                 Navigator.push(
@@ -118,6 +127,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.help),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Help'),
               onTap: () {
                 // Update the state of the app.
@@ -127,6 +137,7 @@ class AppDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout),
               iconColor: Colors.blue,
+              horizontalTitleGap: 0,
               title: const Text('Sign Out'),
               onTap: () {
                 // Update the state of the app.
