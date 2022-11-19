@@ -1,0 +1,1 @@
+const String URI = 'http://172.29.176.1:8080/api/v1/management/';

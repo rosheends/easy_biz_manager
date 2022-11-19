@@ -1,12 +1,10 @@
 import 'dart:convert';
+import 'package:easy_biz_manager/utility/constants.dart';
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
 import 'views/mobile/mobile_home.dart';
-
-// Future<http.Response> fetchProductList() {
-//   return http.get(Uri.parse('http://localhost:8080/api/v1/management/project/'));
-// }
+import 'constant.dart' as constants;
 
 // Class to map with database object
 class Project {
@@ -29,7 +27,7 @@ List<Project> parseProject(String responseBody) {
 
 Future<List<Project>> fetchProductList() async {
   final response = await http.get(
-      Uri.parse('http://172.20.10.7:8080/api/v1/management/project/'),
+      Uri.parse('${constants.URI}project/'),
       headers: {
         "Accept": "application/json",
         "content-type": "application/json"
@@ -105,13 +103,12 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                  //shrinkWrap: true,
                   itemCount: _projectList!.length,
                   itemBuilder: (context, index) {
                     return Card(
                       elevation: 3,
                       shadowColor: Colors.blue,
-                      margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 12.0),
+                      margin: const EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 6.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0.0),
                       ),
@@ -119,8 +116,8 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
                         children: [
                           Row(
                             //Center Column contents vertically,
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, //Center Column contents horizontally,
+                            crossAxisAlignment: CrossAxisAlignment.center, //Center Column contents horizontally,
+                            //mainAxisAlignment: MainAxisAlignment. center,
                             children: [
                               Container(
                                 width: 120,
@@ -198,11 +195,11 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
               children: <Widget>[
             Container(
               padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-              child: DropdownButton(
+              child: DropdownButtonFormField(
                   value: selectedProductValue,
-                  hint: const Text("Select Product"),
+                  //hint: const Text("Select Product"),
                   style: const TextStyle(
-                    color: Colors.blue, //<-- SEE HERE
+                    color: Colors.black54, //<-- SEE HERE
                     fontSize: 16,
                   ),
                   onChanged: (String? newValue) {
@@ -210,15 +207,20 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                       selectedProductValue = newValue!;
                     });
                   },
-                  items: dropdownItems),
+                  items: dropdownItems,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: 'Select Product',
+                  border: OutlineInputBorder(),
+                ),),
             ),
             Container(
               padding: const EdgeInsets.all(10),
-              child: DropdownButton(
+              child: DropdownButtonFormField(
                   value: selectedClientValue,
-                  hint: const Text("Select Client"),
                   style: const TextStyle(
-                    color: Colors.blue, //<-- SEE HERE
+                    color: Colors.black54,
                     fontSize: 16,
                   ),
                   onChanged: (String? newValue) {
@@ -226,7 +228,13 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                       selectedClientValue = newValue!;
                     });
                   },
-                  items: dropdownClientItems),
+                  items: dropdownClientItems,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: 'Select Client',
+                  border: OutlineInputBorder(),
+                ),),
             ),
             Container(
               padding: const EdgeInsets.all(10),
@@ -294,7 +302,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
 
 // Future<http.Response> createClient(String projectCode, description) {
 //   return http.post(
-//     Uri.parse('http://172.20.10.7:8080/api/v1/management/project/'),
+//     Uri.parse('http://172.23.112.1:8080/api/v1/management/project/'),
 //     headers: <String, String>{
 //       'Content-Type': 'application/json; charset=UTF-8',
 //     },
@@ -307,13 +315,14 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
 
 Future<Project> createProject(String projectCode, description) async {
   final response = await http.post(
-    Uri.parse('http://172.20.10.7:8080/api/v1/management/project/'),
+    Uri.parse('${constants.URI}project/'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(<String, String>{
       'project_name': projectCode,
        'description': description,
+      //'project_code': prject
     }),
   );
 
