@@ -46,9 +46,10 @@ class MobileHomeWidget extends StatelessWidget {
         title: const Text(Constants.appName),
       ),
       body: GridView.count(
+          padding: const EdgeInsets.all(10),
           crossAxisCount: 2,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
+          crossAxisSpacing: 10.0,
+          mainAxisSpacing: 10.0,
           children: items.map((data) {
             return GestureDetector(
               onTap: () {
