@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
-import 'views/mobile/mobile_home.dart';
 import 'constant.dart' as constants;
 
 // Class to map with database object

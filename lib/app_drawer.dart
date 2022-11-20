@@ -2,6 +2,8 @@ import 'package:easy_biz_manager/manage_products.dart';
 import 'package:easy_biz_manager/manage_projects.dart';
 import 'package:easy_biz_manager/reporting.dart';
 import 'package:easy_biz_manager/utility/constants.dart';
+import 'package:easy_biz_manager/utility/util.dart';
+import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
 import 'manage_projects.dart';
 import 'manage_clients.dart';
@@ -36,10 +38,7 @@ class AppDrawerWidget extends StatelessWidget {
               horizontalTitleGap: 0,
               title: const Text('Home'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MobileHomeWidget()),
-                );
+                Util.routeNavigatorPush(context, MobileHomeWidget(), WebHomeWidget());
               },
             ),
             ListTile(
@@ -48,10 +47,7 @@ class AppDrawerWidget extends StatelessWidget {
               horizontalTitleGap: 0,
               title: const Text('Products'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ManageProductsWidget()),
-                );
+                Util.routeNavigatorPush(context, ManageProductsWidget(), ManageProductsWidget());
               },
             ),
             ListTile(
@@ -60,10 +56,7 @@ class AppDrawerWidget extends StatelessWidget {
               horizontalTitleGap: 0,
               title: const Text('Projects'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ManageProjectWidget()),
-                );
+                Util.routeNavigatorPush(context, ManageProjectWidget(), ManageProjectWidget());
               },
             ),
             ListTile(
