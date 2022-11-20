@@ -35,4 +35,36 @@ class ExecutorService {
       throw Exception('Failed to create object');
     }
   }
+
+  // Update product service call
+  Future<dynamic> put(String url, Map<String, dynamic> params) async {
+    final response = await http.put(Uri.parse(url.replaceAll("{id}", params['id'].toString())), headers: _headers, body: jsonEncode(params));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return json.decode(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to create object');
+    }
+  }
+
+  // Delete product service call
+  Future<bool> delete(String url, Map<String, dynamic> params) async {
+    final response = await http.delete(Uri.parse(url.replaceAll("{id}", params['id'].toString())), headers: _headers, body: jsonEncode(params));
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return true;
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      return false;
+    }
+  }
 }
+
+

@@ -14,4 +14,14 @@ class ProjectService {
     ExecutorService service = ExecutorService();
     return service.post(Util.getServiceHost() + ProjectEndpoints.post, params);
   }
+
+  Future<dynamic> updateProject(Map<String, dynamic> params) async{
+    ExecutorService service = ExecutorService();
+    return service.put(Util.getServiceHost() + ProjectEndpoints.put, params);
+  }
+
+  Future<bool> deleteProject(Map<String, dynamic> params) async{
+    ExecutorService service = ExecutorService();
+    return service.delete(Util.getServiceHost() + ProjectEndpoints.delete, params);
+  }
 }

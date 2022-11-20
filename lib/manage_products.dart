@@ -397,8 +397,6 @@ class _DetailProductWidgetState extends State<DetailProductWidget> {
           ),
         ));
   }
-
-  void submitData() {}
 }
 
 // Create product service call

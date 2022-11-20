@@ -1,49 +1,36 @@
-import 'dart:convert';
-import 'package:easy_biz_manager/utility/constants.dart';
+
+import 'package:easy_biz_manager/services/product_service.dart';
+import 'package:easy_biz_manager/services/project_service.dart';
+import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
-import 'views/mobile/mobile_home.dart';
 import 'constant.dart' as constants;
 
 // Class to map with database object
-class Project {
-  final String projectName;
-  final String description;
+// class Project {
+//   final int projectId;
+//   final String projectCode;
+//   final String projectName;
+//   final String description;
+//   final String budget;
+//
+//   Project(this.projectId, this.projectCode, this.projectName, this.description, this.budget);
+//   factory Project.fromMap(Map<String, dynamic> json) {
+//     return Project(
+//       json['project_id'],
+//       json['project_code'],
+//       json['project_name'],
+//       json['description'],
+//       json['budget'],
+//     );
+//   }
+// }
 
-  Project(this.projectName, this.description);
-  factory Project.fromMap(Map<String, dynamic> json) {
-    return Project(
-      json['project_name'],
-      json['description'],
-    );
-  }
-}
-
-List<Project> parseProject(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parsed.map<Project>((json) => Project.fromMap(json)).toList();
-}
-
-Future<List<Project>> fetchProductList() async {
-  final response = await http.get(
-      Uri.parse('${constants.URI}project/'),
-      headers: {
-        "Accept": "application/json",
-        "content-type": "application/json"
-      });
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    //return Project.fromMap(jsonDecode(response.body));
-    return parseProject(response.body);
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load projects');
-  }
-}
+// List<dynamic> parseProject(String responseBody) {
+//   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+//   return parsed.map<dynamic>((json) => Project.fromMap(json)).toList();
+// }
 
 class ManageProjectWidget extends StatefulWidget {
   const ManageProjectWidget({super.key});
@@ -53,22 +40,24 @@ class ManageProjectWidget extends StatefulWidget {
 }
 
 class _ManageProjectWidgetState extends State<ManageProjectWidget> {
-  late Future<List<Project>> projectList;
-  late List<Project>? _projectList = [];
+  late Future<List<dynamic>> projectList;
+  late List<dynamic>? _projectList = [];
   bool loading = true;
+  Future<dynamic>? updatedItem;
+  Future<bool>? _response;
+  ProjectService projService = ProjectService();
 
   @override
   void initState() {
     super.initState();
-    //projectList = fetchProductList();
     _getData();
   }
 
   void _getData() async {
-    _projectList = (await fetchProductList());
-    Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {
-          loading = false;
-        }));
+    _projectList = (await projService.getProjects());
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -92,57 +81,64 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
           )
         ],
       ),
-      body: Center(
-          child: loading == true
-              ? const Center(
-                  child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(),
+      body: loading ? Center(
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: CircularProgressIndicator(),
+        ),
+      ) : ListView.separated(
+        itemCount: _projectList!.length,
+        itemBuilder: (context, index) {
+
+          return Dismissible(
+            // Step 1
+            key: UniqueKey(),
+            background: Container(color: Colors.red),
+            secondaryBackground: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              child: const Icon(Icons.delete),
+            ),
+            onDismissed: (direction) {
+              // Step 2
+              setState(() {
+                _projectList!.removeAt(index);
+                updatedItem = projService.deleteProject(_projectList![index]);
+              });
+              if (_projectList![index]['is_active'] == 1) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        '${_projectList![index]} successfully deleted')));
+              } else {
+                return;
+              }
+            },
+            child: ListTile(
+              title: Text(_projectList![index]['project_code']),
+              subtitle: Text(_projectList![index]['description']),
+              selectedColor: Colors.blueAccent,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        DetailProjectWidget(project: _projectList![index]),
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                  itemCount: _projectList!.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 3,
-                      shadowColor: Colors.blue,
-                      margin: const EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 6.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0.0),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            //Center Column contents vertically,
-                            crossAxisAlignment: CrossAxisAlignment.center, //Center Column contents horizontally,
-                            //mainAxisAlignment: MainAxisAlignment. center,
-                            children: [
-                              Container(
-                                width: 120,
-                              child: Text(
-                                _projectList![index].projectName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                              ),
-                              Text(
-                                _projectList![index].description,
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 30.0,
-                          ),
-                        ],
-                      ),
-                    );
-                  })),
+                );
+              },
+              // When a user taps the ListTile, navigate to the DetailScreen.
+              // Notice that you're not only creating a DetailScreen, you're
+              // also passing the current todo through to it.
+              trailing: const Icon(Icons.more_vert),
+            ),
+
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider();
+        },
+      ),
       drawer: const AppDrawerWidget(),
     );
   }
@@ -157,12 +153,37 @@ class AddProjectWidget extends StatefulWidget {
 }
 
 class _AddProjectWidgetState extends State<AddProjectWidget> {
-  TextEditingController projectName = TextEditingController();
-  TextEditingController description = TextEditingController();
-  TextEditingController timeBudget = TextEditingController();
+  TextEditingController projectCodeCtrl = TextEditingController();
+  TextEditingController projectNameCtrl = TextEditingController();
+  TextEditingController descriptionCtrl = TextEditingController();
+  TextEditingController timeBudgetCtrl = TextEditingController();
+
+
+  ProductService prodService = ProductService();
+  ProjectService projService = ProjectService();
+  late List<dynamic>? _productList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getProductData();
+
+    projectCodeCtrl.addListener(() {
+      setState(() {
+        _isBtnEnabled = false;
+      });
+    });
+  }
+
+  void _getProductData() async {
+    var temp = (await prodService.getProducts());
+     setState(() {
+       _productList = temp;
+     });
+  }
 
   // sample values
-  List<DropdownMenuItem<String>> get dropdownItems {
+  List<DropdownMenuItem<String>> get dropdownProductItems {
     List<DropdownMenuItem<String>> menuProductItems = [
       const DropdownMenuItem(value: "C001", child: Text("Supply Chain")),
       const DropdownMenuItem(value: "C002", child: Text("Finance"))
@@ -171,17 +192,18 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   }
 
   // sample values
-  List<DropdownMenuItem<String>> get dropdownClientItems {
-    List<DropdownMenuItem<String>> menuClientItems = [
-      const DropdownMenuItem(value: "C001", child: Text("Singer")),
-      const DropdownMenuItem(value: "C002", child: Text("Softlogic"))
-    ];
-    return menuClientItems;
-  }
+  // List<DropdownMenuItem<String>> get dropdownClientItems {
+  //   List<DropdownMenuItem<String>> menuClientItems = [
+  //     const DropdownMenuItem(value: "C001", child: Text("Singer")),
+  //     const DropdownMenuItem(value: "C002", child: Text("Softlogic"))
+  //   ];
+  //   return menuClientItems;
+  // }
 
   String? selectedProductValue;
   String? selectedClientValue;
-  Future<Project>? _futureProject;
+  Future<dynamic>? _futureProject;
+  bool _isBtnEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +215,24 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
           child: ListView(
               //  ListView(
               children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+                  child: TextField(
+                    controller: projectCodeCtrl,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Project Code *',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                    onChanged: (text) {
+                      if (projectCodeCtrl.text.isNotEmpty && selectedProductValue != null){
+                        _isBtnEnabled = true;
+                      }
+                    },
+                  ),
+                ),
             Container(
-              padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+              padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField(
                   value: selectedProductValue,
                   //hint: const Text("Select Product"),
@@ -203,11 +241,19 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                     fontSize: 16,
                   ),
                   onChanged: (String? newValue) {
-                    setState(() {
-                      selectedProductValue = newValue!;
-                    });
+                      setState(() {
+                        selectedProductValue = newValue!;
+                        if (projectCodeCtrl.text.isNotEmpty && selectedProductValue != null){
+                          _isBtnEnabled = true;
+                        }
+                      });
                   },
-                  items: dropdownItems,
+                  items: _productList!.map((item) {
+                    return DropdownMenuItem(
+                      child: new Text(item['product_code'].toString()),
+                      value: item['product_code'].toString(),
+                    );
+                  }).toList(),
                 decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -228,7 +274,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                       selectedClientValue = newValue!;
                     });
                   },
-                  items: dropdownClientItems,
+                  items: null,
                 decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -239,18 +285,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: projectName,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Project Code',
-                ),
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: description,
+                controller: projectNameCtrl,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Project Name',
@@ -258,13 +293,24 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextField(
+                    controller: descriptionCtrl,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Description',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: timeBudget,
+                controller: timeBudgetCtrl,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Time Budget',
+                  labelText: 'Project Budget',
                 ),
                 style: const TextStyle(fontSize: 16),
               ),
@@ -283,56 +329,281 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                           borderRadius: BorderRadius.circular(20.0)),
                       minimumSize: const Size(50, 50),
                     ),
-                    child: const Text('Save', style: TextStyle(fontSize: 20)),
-                    onPressed: () {
-                      setState(() {
-                        _futureProject = createProject(projectName.text, description.text);
 
-                      });
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MobileHomeWidget()),
-                      );
-                    })),
+                    // onPressed: () {
+                    //   setState(() {
+                    //     _futureProject = projService.createProject({
+                    //       "project_code": projectCodeCtrl.text,
+                    //       "project_name": descriptionCtrl.text,
+                    //       "description" : descriptionCtrl.text,
+                    //       "budget" : timeBudgetCtrl.text,
+                    //       "is_active" : 1,
+                    //       "product_code": selectedProductValue,
+                    //     });
+                    //
+                    //   });
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => MobileHomeWidget()),
+                    //   );
+                    // }
+                    onPressed: _isBtnEnabled
+                    ? () {
+            setState(() {
+            _futureProject = projService.createProject({
+            "project_code": projectCodeCtrl.text,
+            "project_name": descriptionCtrl.text,
+            "description" : descriptionCtrl.text,
+            "budget" : timeBudgetCtrl.text,
+            "is_active" : 1,
+            "product_code": selectedProductValue,
+            });
+            });
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+            builder: (context) => MobileHomeWidget()),
+            );
+            }
+              : null,
+                  child: const Text('Save', style: TextStyle(fontSize: 20)),
+                    )),
           ])),
     );
   }
 }
 
-// Future<http.Response> createClient(String projectCode, description) {
-//   return http.post(
-//     Uri.parse('http://172.23.112.1:8080/api/v1/management/project/'),
-//     headers: <String, String>{
-//       'Content-Type': 'application/json; charset=UTF-8',
-//     },
-//     body: jsonEncode(<String, String>{
-//       'project_name': projectCode,
-//       'description': description,
-//     }),
-//   );
-// }
+// Detail and Edit project functionality
+class DetailProjectWidget extends StatefulWidget {
+  // In the constructor require a Product
+  const DetailProjectWidget({super.key, required this.project});
 
-Future<Project> createProject(String projectCode, description) async {
-  final response = await http.post(
-    Uri.parse('${constants.URI}project/'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'project_name': projectCode,
-       'description': description,
-      //'project_code': prject
-    }),
-  );
+  // Declare a field that holds the product
+  final dynamic project;
 
-  if (response.statusCode == 200) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-    return Project.fromMap(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to create project.');
+  @override
+  State<DetailProjectWidget> createState() => _DetailProjectWidgetState();
+}
+
+class _DetailProjectWidgetState extends State<DetailProjectWidget> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isEditModeEnabled = false;
+  Future<dynamic>? _updatedProduct;
+  ProjectService projService = ProjectService();
+
+  TextEditingController projectCodeCtrl = TextEditingController();
+  TextEditingController projectNameCtrl = TextEditingController();
+  TextEditingController descriptionCtrl = TextEditingController();
+  TextEditingController timeBudgetCtrl = TextEditingController();
+  TextEditingController productCodeCtrl = TextEditingController();
+  //TextEditingController clientInfoCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    projectCodeCtrl.text = widget.project["project_code"].toString();
+    projectNameCtrl.text = widget.project["project_name"].toString();
+    descriptionCtrl.text = widget.project["description"].toString();
+    timeBudgetCtrl.text = widget.project["budget"].toString();
+    productCodeCtrl.text = widget.project["product_code"].toString();
+    //var clientId = widget.project["description"].toString();
+
+    //start listening to changes
+    projectNameCtrl.addListener(() {
+      setState(() {
+        if (projectNameCtrl.text != widget.project["project_name"].toString()) {
+          _isEditModeEnabled = true;
+          return;
+        } else {
+          _isEditModeEnabled = false;
+        }
+      });
+    });
+
+        descriptionCtrl.addListener(() {
+      setState(() {
+        if (descriptionCtrl.text != widget.project["description"].toString()) {
+          _isEditModeEnabled = true;
+          return;
+        } else {
+          _isEditModeEnabled = false;
+        }
+      });
+    });
+
+    timeBudgetCtrl.addListener(() {
+      setState(() {
+        if (timeBudgetCtrl.text != widget.project["budget"].toString()) {
+          _isEditModeEnabled = true;
+          return;
+        } else {
+          _isEditModeEnabled = false;
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    projectCodeCtrl.dispose();
+    projectNameCtrl.dispose();
+    descriptionCtrl.dispose();
+    timeBudgetCtrl.dispose();
+    productCodeCtrl.dispose();
+    //clientInfoCtrl.dispose();
+    super.dispose();
+ }
+
+  @override
+  Widget build(BuildContext context) {
+    // Use the Product to create the UI.
+    return GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.project["project_code"]),
+          ),
+          body: Form(
+            child: ListView(
+              //  ListView(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: productCodeCtrl,
+                    decoration: const InputDecoration(
+                      //border: OutlineInputBorder(),
+                      labelText: 'Product Code *',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                    enabled: false,
+                  ),
+                ),
+                // Container(
+                //   padding: const EdgeInsets.all(10),
+                //   child: TextFormField(
+                //     controller: productCodeCtrl,
+                //     decoration: const InputDecoration(
+                //       border: OutlineInputBorder(),
+                //       labelText: 'Product Code *',
+                //     ),
+                //     style: const TextStyle(fontSize: 16),
+                //     enabled: false,
+                //   ),
+                // ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: projectCodeCtrl,
+                    decoration: const InputDecoration(
+                     // border: OutlineInputBorder(),
+                      labelText: 'Product Code *',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                    enabled: false,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: projectNameCtrl,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Project Name',
+
+                    ),
+                    style: const TextStyle(fontSize: 16),
+
+                    validator: (value) {
+                      if (value != widget.project["project_name"]) {
+                        _isEditModeEnabled = true;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: descriptionCtrl,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Description',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+
+                    validator: (value) {
+                      if (value != widget.project["description"]) {
+                        _isEditModeEnabled = true;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: TextFormField(
+                    controller: timeBudgetCtrl,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Project Budget',
+                    ),
+                    style: const TextStyle(fontSize: 16),
+
+                    validator: (value) {
+                      if (value != widget.project["budget"]) {
+                        _isEditModeEnabled = true;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Container(
+                    padding: const EdgeInsets.fromLTRB(110, 0, 110, 0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        onPrimary: Colors.white,
+                        shadowColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        // minimumSize: Size(50, 50);
+                      ),
+                      onPressed: _isEditModeEnabled
+                          ? () {
+                        setState(() {
+                          _updatedProduct = projService.updateProject({
+                            "project_name": projectNameCtrl.text,
+                            "description" : descriptionCtrl.text,
+                            "budget" : timeBudgetCtrl.text,
+                            "id": widget.project["id"],
+                          });
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ManageProjectWidget()),
+                        );
+                      }
+                          : null,
+                      child: const Text('Save'),
+                    )),
+              ],
+            ),
+          ),
+        ));
   }
 }
+
+
+
+
+
