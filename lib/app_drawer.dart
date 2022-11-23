@@ -3,6 +3,7 @@ import 'package:easy_biz_manager/manage_projects.dart';
 import 'package:easy_biz_manager/reporting.dart';
 import 'package:easy_biz_manager/utility/constants.dart';
 import 'package:easy_biz_manager/utility/util.dart';
+import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
 import 'manage_projects.dart';
@@ -68,6 +69,18 @@ class AppDrawerWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ManageClientWidget()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              iconColor: Colors.blue,
+              horizontalTitleGap: 0,
+              title: const Text('Users'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignUpWidget()),
                 );
               },
             ),

@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
 import '../../manage_clients.dart';
 import '../../utility/constants.dart';
+import '../common/sign_up.dart';
 
 class WebHomeWidget extends StatelessWidget {
   WebHomeWidget({Key? key}) : super(key: key);
@@ -21,6 +22,10 @@ class WebHomeWidget extends StatelessWidget {
         title: 'Manage Clients',
         icon: Icons.people,
         screen: const ManageClientWidget()),
+    Item(
+        title: 'Manage Users',
+        icon: Icons.people,
+        screen: const SignUpWidget()),
     Item(
         title: 'Manage Expenses',
         icon: Icons.paid_rounded,

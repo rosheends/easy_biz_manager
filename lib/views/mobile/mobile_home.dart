@@ -2,6 +2,7 @@ import 'package:easy_biz_manager/approve_reject_requests.dart';
 import 'package:easy_biz_manager/manage_expenses.dart';
 import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/reporting.dart';
+import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:flutter/material.dart';
 import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,10 @@ class MobileHomeWidget extends StatelessWidget {
         title: 'Manage Clients',
         icon: Icons.people,
         screen: const ManageClientWidget()),
+    Item(
+        title: 'Manage Users',
+        icon: Icons.people,
+        screen: const SignUpWidget()),
     Item(
         title: 'Manage Expenses',
         icon: Icons.paid_rounded,

@@ -4,6 +4,8 @@ import 'package:easy_biz_manager/utility/util.dart';
 import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 
 import '../mobile/mobile_home.dart';
 
@@ -19,10 +21,31 @@ class _SignInWidgetState extends State<SignInWidget> {
   TextEditingController passwordController = TextEditingController();
   bool checkedValue = false;
 
+  String? selectedValue;
+  final _formKey = GlobalKey<FormState>();
+  Future<dynamic>? _futureClient;
+
+  void _submit() {
+    final isValid = _formKey.currentState?.validate();
+    if (!isValid!) {
+      return;
+    }
+    _formKey.currentState?.save();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+    );
+  }
+
+  // bool isValidateLogin(String username, String pwd){
+  //
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
+    return Form(
+      key: _formKey,
+     // padding: const EdgeInsets.all(10),
       child: Util.isRunningOnWeb() ? Row(
         children: [
           Expanded(
@@ -42,23 +65,37 @@ class _SignInWidgetState extends State<SignInWidget> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: TextField(
+                      child: TextFormField(
                         controller: nameController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Email/Username',
                         ),
+                        style: const TextStyle(fontSize: 16),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Invalid username';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: TextField(
+                      child: TextFormField(
                         obscureText: true,
                         controller: passwordController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Password',
                         ),
+                        style: const TextStyle(fontSize: 16),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Invalid password';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                     Container(child: Row(
@@ -91,14 +128,12 @@ class _SignInWidgetState extends State<SignInWidget> {
                         width: 250,
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                         decoration: BoxDecoration(
-                            color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+                            color: Colors.blue, borderRadius: BorderRadius.circular(10),
+                        ),
                         child: ElevatedButton(
                           child: const Text('Sign In', style: TextStyle(fontSize: 20)),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
-                            );
+                            _submit();
 
                             // call validate function
                           },
@@ -106,24 +141,24 @@ class _SignInWidgetState extends State<SignInWidget> {
                     SizedBox(
                       height: 50,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text('Does not have an account yet?', style: TextStyle(fontSize: 17),),
-                        TextButton(
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 18, color: Colors.blue),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const SignUpWidget()),
-                            );
-                          },
-                        )
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: <Widget>[
+                    //     const Text('Does not have an account yet?', style: TextStyle(fontSize: 17),),
+                    //     TextButton(
+                    //       child: const Text(
+                    //         'Sign Up',
+                    //         style: TextStyle(fontSize: 18, color: Colors.blue),
+                    //       ),
+                    //       onPressed: () {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(builder: (context) => const SignUpWidget()),
+                    //         );
+                    //       },
+                    //     )
+                    //   ],
+                    // ),
                   ],
                 ),
               )
@@ -141,35 +176,49 @@ class _SignInWidgetState extends State<SignInWidget> {
             ),
             Container(
               padding: const EdgeInsets.all(10),
-              child: TextField(
+              child: TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Email/Username',
                 ),
+                style: const TextStyle(fontSize: 16),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Invalid username';
+                  }
+                  return null;
+                },
               ),
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextField(
+              child: TextFormField(
                 obscureText: true,
                 controller: passwordController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
                 ),
+                style: const TextStyle(fontSize: 16),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Invalid password';
+                  }
+                  return null;
+                },
               ),
             ),
-            CheckboxListTile(
-              title: const Text("Remember Me"),
-              value: checkedValue,
-              onChanged: (bool? value) {
-                setState(() {
-                  checkedValue = value!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
+            // CheckboxListTile(
+            //   title: const Text("Remember Me"),
+            //   value: checkedValue,
+            //   onChanged: (bool? value) {
+            //     setState(() {
+            //       checkedValue = value!;
+            //     });
+            //   },
+            //   controlAffinity: ListTileControlAffinity.leading,
+            // ),
             Container(
                 height: 50,
                 width: 250,
@@ -179,10 +228,11 @@ class _SignInWidgetState extends State<SignInWidget> {
                 child: ElevatedButton(
                   child: const Text('Sign In', style: TextStyle(fontSize: 20)),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
-                    );
+                    _submit();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+                    // );
 
                     // call validate function
                   },
@@ -204,24 +254,24 @@ class _SignInWidgetState extends State<SignInWidget> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text('Does not have an account yet?', style: TextStyle(fontSize: 17),),
-                TextButton(
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 18, color: Colors.blue),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpWidget()),
-                    );
-                  },
-                )
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: <Widget>[
+            //     const Text('Does not have an account yet?', style: TextStyle(fontSize: 17),),
+            //     TextButton(
+            //       child: const Text(
+            //         'Sign Up',
+            //         style: TextStyle(fontSize: 18, color: Colors.blue),
+            //       ),
+            //       onPressed: () {
+            //         Navigator.push(
+            //           context,
+            //           MaterialPageRoute(builder: (context) => const SignUpWidget()),
+            //         );
+            //       },
+            //     )
+            //   ],
+            // ),
           ]),
     );
   }

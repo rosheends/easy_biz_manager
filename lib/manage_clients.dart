@@ -1,3 +1,5 @@
+import 'package:easy_biz_manager/services/user_service.dart';
+import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:country_list_pick/country_list_pick.dart';
@@ -67,6 +69,8 @@ class _AddClientWidgetState extends State<AddClientWidget> {
 
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
+  Future<dynamic>? _futureClient;
+  UserService clientService = UserService();
 
   void _submit() {
     final isValid = _formKey.currentState?.validate();
@@ -159,7 +163,7 @@ class _AddClientWidgetState extends State<AddClientWidget> {
                   if (value == null || value.isEmpty) {
                     return 'Enter your contact no';
                   }
-                  if (value.length > 10) {
+                  if (value.length > 10 || value.length < 10) {
                     return 'Invalid contact no';
                   }
                   return null;
@@ -213,22 +217,41 @@ class _AddClientWidgetState extends State<AddClientWidget> {
             const SizedBox(
               height: 25,
             ),
-            Container(
-                padding: const EdgeInsets.fromLTRB(110, 0, 110, 0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
-                    shadowColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0)),
-                    minimumSize: const Size(50, 50),
-                  ),
-                  child: const Text('Save', style: TextStyle(fontSize: 20)),
-                  onPressed: () {
-                    _submit();
-                  },
-                )),
+             Container(
+                 padding: const EdgeInsets.fromLTRB(110, 0, 110, 0),
+                 child: ElevatedButton(
+                   style: ElevatedButton.styleFrom(
+                     primary: Colors.blue,
+                     onPrimary: Colors.white,
+                     shadowColor: Colors.blueAccent,
+                     shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.circular(20.0)),
+                     minimumSize: const Size(50, 50),
+                   ),
+                   child: const Text('Save', style: TextStyle(fontSize: 20)),
+                    onPressed: () {
+                        _submit();
+                      // _futureClient = clientService.createClient({
+                      //   "first_name": projectCodeCtrl.text,
+                      //   "last_name": descriptionCtrl.text,
+                      //   "email" : descriptionCtrl.text,
+                      //   "username" : timeBudgetCtrl.text,
+                      //   "password" : 1,
+                      //   "contact_no": selectedProductValue,
+                      //   "address_no": selectedProductValue,
+                      //   "city": selectedProductValue,
+                      //   "country": selectedProductValue,
+                      //   "is_active": selectedProductValue,
+                      //   "is_default_password": selectedProductValue,
+                      // });
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => MobileHomeWidget()),
+                      // );
+                   },
+                 ),
+               ),
           ])),
     );
   }

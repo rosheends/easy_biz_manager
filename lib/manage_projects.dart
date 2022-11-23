@@ -1,4 +1,3 @@
-
 import 'package:easy_biz_manager/services/product_service.dart';
 import 'package:easy_biz_manager/services/project_service.dart';
 import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
@@ -81,64 +80,67 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
           )
         ],
       ),
-      body: loading ? Center(
-        child: SizedBox(
-          width: 30,
-          height: 30,
-          child: CircularProgressIndicator(),
-        ),
-      ) : ListView.separated(
-        itemCount: _projectList!.length,
-        itemBuilder: (context, index) {
-
-          return Dismissible(
-            // Step 1
-            key: UniqueKey(),
-            background: Container(color: Colors.red),
-            secondaryBackground: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              child: const Icon(Icons.delete),
-            ),
-            onDismissed: (direction) {
-              // Step 2
-              setState(() {
-                _projectList!.removeAt(index);
-                updatedItem = projService.deleteProject(_projectList![index]);
-              });
-              if (_projectList![index]['is_active'] == 1) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(
-                        '${_projectList![index]} successfully deleted')));
-              } else {
-                return;
-              }
-            },
-            child: ListTile(
-              title: Text(_projectList![index]['project_code']),
-              subtitle: Text(_projectList![index]['description']),
-              selectedColor: Colors.blueAccent,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        DetailProjectWidget(project: _projectList![index]),
+      body: loading
+          ? Center(
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : ListView.separated(
+              itemCount: _projectList!.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  // Step 1
+                  key: UniqueKey(),
+                  background: Container(color: Colors.red),
+                  secondaryBackground: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    child: const Icon(Icons.delete),
+                  ),
+                  onDismissed: (direction) {
+                    // Step 2
+                    setState(() {
+                      _projectList!.removeAt(index);
+                      updatedItem =
+                          projService.deleteProject(_projectList![index]);
+                    });
+                    if (_projectList![index]['is_active'] == 1) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              '${_projectList![index]} successfully deleted')));
+                    } else {
+                      return;
+                    }
+                  },
+                  child: ListTile(
+                    title: Text(_projectList![index]['project_code']),
+                    subtitle: Text(_projectList![index]['project_code'] +
+                        " - " +
+                        _projectList![index]['description']),
+                    selectedColor: Colors.blueAccent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailProjectWidget(
+                              project: _projectList![index]),
+                        ),
+                      );
+                    },
+                    // When a user taps the ListTile, navigate to the DetailScreen.
+                    // Notice that you're not only creating a DetailScreen, you're
+                    // also passing the current todo through to it.
+                    trailing: const Icon(Icons.more_vert),
                   ),
                 );
               },
-              // When a user taps the ListTile, navigate to the DetailScreen.
-              // Notice that you're not only creating a DetailScreen, you're
-              // also passing the current todo through to it.
-              trailing: const Icon(Icons.more_vert),
+              separatorBuilder: (context, index) {
+                return const Divider();
+              },
             ),
-
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
-      ),
       drawer: const AppDrawerWidget(),
     );
   }
@@ -158,7 +160,6 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   TextEditingController descriptionCtrl = TextEditingController();
   TextEditingController timeBudgetCtrl = TextEditingController();
 
-
   ProductService prodService = ProductService();
   ProjectService projService = ProjectService();
   late List<dynamic>? _productList = [];
@@ -177,9 +178,9 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
 
   void _getProductData() async {
     var temp = (await prodService.getProducts());
-     setState(() {
-       _productList = temp;
-     });
+    setState(() {
+      _productList = temp;
+    });
   }
 
   // sample values
@@ -215,72 +216,76 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
           child: ListView(
               //  ListView(
               children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-                  child: TextField(
-                    controller: projectCodeCtrl,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Project Code *',
-                    ),
-                    style: const TextStyle(fontSize: 16),
-                    onChanged: (text) {
-                      if (projectCodeCtrl.text.isNotEmpty && selectedProductValue != null){
-                        _isBtnEnabled = true;
-                      }
-                    },
-                  ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+              child: TextField(
+                controller: projectCodeCtrl,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Project Code *',
                 ),
+                style: const TextStyle(fontSize: 16),
+                onChanged: (text) {
+                  if (projectCodeCtrl.text.isNotEmpty &&
+                      selectedProductValue != null) {
+                    _isBtnEnabled = true;
+                  }
+                },
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField(
-                  value: selectedProductValue,
-                  //hint: const Text("Select Product"),
-                  style: const TextStyle(
-                    color: Colors.black54, //<-- SEE HERE
-                    fontSize: 16,
-                  ),
-                  onChanged: (String? newValue) {
-                      setState(() {
-                        selectedProductValue = newValue!;
-                        if (projectCodeCtrl.text.isNotEmpty && selectedProductValue != null){
-                          _isBtnEnabled = true;
-                        }
-                      });
-                  },
-                  items: _productList!.map((item) {
-                    return DropdownMenuItem(
-                      child: new Text(item['product_code'].toString()),
-                      value: item['product_code'].toString(),
-                    );
-                  }).toList(),
+                value: selectedProductValue,
+                //hint: const Text("Select Product"),
+                style: const TextStyle(
+                  color: Colors.black54, //<-- SEE HERE
+                  fontSize: 16,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedProductValue = newValue!;
+                    if (projectCodeCtrl.text.isNotEmpty &&
+                        selectedProductValue != null) {
+                      _isBtnEnabled = true;
+                    }
+                  });
+                },
+                items: _productList!.map((item) {
+                  return DropdownMenuItem(
+                    child: new Text(item['product_code'].toString()),
+                    value: item['product_code'].toString(),
+                  );
+                }).toList(),
                 decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   labelText: 'Select Product',
                   border: OutlineInputBorder(),
-                ),),
+                ),
+              ),
             ),
             Container(
               padding: const EdgeInsets.all(10),
               child: DropdownButtonFormField(
-                  value: selectedClientValue,
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                  ),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedClientValue = newValue!;
-                    });
-                  },
-                  items: null,
+                value: selectedClientValue,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 16,
+                ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedClientValue = newValue!;
+                  });
+                },
+                items: null,
                 decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
                   labelText: 'Select Client',
                   border: OutlineInputBorder(),
-                ),),
+                ),
+              ),
             ),
             Container(
               padding: const EdgeInsets.all(10),
@@ -293,17 +298,17 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    controller: descriptionCtrl,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Description',
-                    ),
-                    style: const TextStyle(fontSize: 16),
-                  ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                controller: descriptionCtrl,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Description',
                 ),
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
@@ -321,54 +326,35 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
             Container(
                 padding: const EdgeInsets.fromLTRB(110, 0, 110, 0),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                      onPrimary: Colors.white,
-                      shadowColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      minimumSize: const Size(50, 50),
-                    ),
-
-                    // onPressed: () {
-                    //   setState(() {
-                    //     _futureProject = projService.createProject({
-                    //       "project_code": projectCodeCtrl.text,
-                    //       "project_name": descriptionCtrl.text,
-                    //       "description" : descriptionCtrl.text,
-                    //       "budget" : timeBudgetCtrl.text,
-                    //       "is_active" : 1,
-                    //       "product_code": selectedProductValue,
-                    //     });
-                    //
-                    //   });
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => MobileHomeWidget()),
-                    //   );
-                    // }
-                    onPressed: _isBtnEnabled
-                    ? () {
-            setState(() {
-            _futureProject = projService.createProject({
-            "project_code": projectCodeCtrl.text,
-            "project_name": descriptionCtrl.text,
-            "description" : descriptionCtrl.text,
-            "budget" : timeBudgetCtrl.text,
-            "is_active" : 1,
-            "product_code": selectedProductValue,
-            });
-            });
-            Navigator.push(
-            context,
-            MaterialPageRoute(
-            builder: (context) => MobileHomeWidget()),
-            );
-            }
-              : null,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                    shadowColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    minimumSize: const Size(50, 50),
+                  ),
+                  onPressed: _isBtnEnabled
+                      ? () {
+                          setState(() {
+                            _futureProject = projService.createProject({
+                              "project_code": projectCodeCtrl.text,
+                              "project_name": descriptionCtrl.text,
+                              "description": descriptionCtrl.text,
+                              "budget": timeBudgetCtrl.text,
+                              "is_active": 1,
+                              "product_code": selectedProductValue,
+                            });
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MobileHomeWidget()),
+                          );
+                        }
+                      : null,
                   child: const Text('Save', style: TextStyle(fontSize: 20)),
-                    )),
+                )),
           ])),
     );
   }
@@ -422,7 +408,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
       });
     });
 
-        descriptionCtrl.addListener(() {
+    descriptionCtrl.addListener(() {
       setState(() {
         if (descriptionCtrl.text != widget.project["description"].toString()) {
           _isEditModeEnabled = true;
@@ -455,7 +441,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
     productCodeCtrl.dispose();
     //clientInfoCtrl.dispose();
     super.dispose();
- }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -501,7 +487,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                   child: TextFormField(
                     controller: projectCodeCtrl,
                     decoration: const InputDecoration(
-                     // border: OutlineInputBorder(),
+                      // border: OutlineInputBorder(),
                       labelText: 'Product Code *',
                     ),
                     style: const TextStyle(fontSize: 16),
@@ -515,10 +501,8 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Project Name',
-
                     ),
                     style: const TextStyle(fontSize: 16),
-
                     validator: (value) {
                       if (value != widget.project["project_name"]) {
                         _isEditModeEnabled = true;
@@ -536,7 +520,6 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                       labelText: 'Description',
                     ),
                     style: const TextStyle(fontSize: 16),
-
                     validator: (value) {
                       if (value != widget.project["description"]) {
                         _isEditModeEnabled = true;
@@ -554,7 +537,6 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                       labelText: 'Project Budget',
                     ),
                     style: const TextStyle(fontSize: 16),
-
                     validator: (value) {
                       if (value != widget.project["budget"]) {
                         _isEditModeEnabled = true;
@@ -579,20 +561,21 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                       ),
                       onPressed: _isEditModeEnabled
                           ? () {
-                        setState(() {
-                          _updatedProduct = projService.updateProject({
-                            "project_name": projectNameCtrl.text,
-                            "description" : descriptionCtrl.text,
-                            "budget" : timeBudgetCtrl.text,
-                            "id": widget.project["id"],
-                          });
-                        });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ManageProjectWidget()),
-                        );
-                      }
+                              setState(() {
+                                _updatedProduct = projService.updateProject({
+                                  "project_name": projectNameCtrl.text,
+                                  "description": descriptionCtrl.text,
+                                  "budget": timeBudgetCtrl.text,
+                                  "id": widget.project["id"],
+                                });
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ManageProjectWidget()),
+                              );
+                            }
                           : null,
                       child: const Text('Save'),
                     )),
@@ -602,8 +585,3 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
         ));
   }
 }
-
-
-
-
-
