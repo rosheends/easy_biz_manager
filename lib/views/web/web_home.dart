@@ -14,18 +14,18 @@ class WebHomeWidget extends StatelessWidget {
   WebHomeWidget({Key? key}) : super(key: key);
 
   List<Item> items = [
+    // Item(
+    //     title: 'Manage Clients',
+    //     icon: Icons.people,
+    //     screen: const ManageClientWidget()),
+    Item(
+        title: 'Manage Users',
+        icon: Icons.people,
+        screen: const UserListWidget()),
     Item(
         title: 'Manage Projects',
         icon: Icons.description_outlined,
         screen: const ManageProjectWidget()),
-    Item(
-        title: 'Manage Clients',
-        icon: Icons.people,
-        screen: const ManageClientWidget()),
-    Item(
-        title: 'Manage Users',
-        icon: Icons.people,
-        screen: const SignUpWidget()),
     Item(
         title: 'Manage Expenses',
         icon: Icons.paid_rounded,

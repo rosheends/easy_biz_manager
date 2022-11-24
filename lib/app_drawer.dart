@@ -51,6 +51,30 @@ class AppDrawerWidget extends StatelessWidget {
                 Util.routeNavigatorPush(context, ManageProductsWidget(), ManageProductsWidget());
               },
             ),
+            // ListTile(
+            //   leading: const Icon(Icons.people),
+            //   iconColor: Colors.blue,
+            //   horizontalTitleGap: 0,
+            //   title: const Text('Clients'),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => const ManageClientWidget()),
+            //     );
+            //   },
+            // ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              iconColor: Colors.blue,
+              horizontalTitleGap: 0,
+              title: const Text('Users'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UserListWidget()),
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.description_outlined),
               iconColor: Colors.blue,
@@ -60,40 +84,16 @@ class AppDrawerWidget extends StatelessWidget {
                 Util.routeNavigatorPush(context, ManageProjectWidget(), ManageProjectWidget());
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              iconColor: Colors.blue,
-              horizontalTitleGap: 0,
-              title: const Text('Clients'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ManageClientWidget()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              iconColor: Colors.blue,
-              horizontalTitleGap: 0,
-              title: const Text('Users'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignUpWidget()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.people_outline),
-              iconColor: Colors.blue,
-              horizontalTitleGap: 0,
-              title: const Text('Vendors'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.people_outline),
+            //   iconColor: Colors.blue,
+            //   horizontalTitleGap: 0,
+            //   title: const Text('Vendors'),
+            //   onTap: () {
+            //     // Update the state of the app.
+            //     // ...
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.paid_rounded),
               iconColor: Colors.blue,
