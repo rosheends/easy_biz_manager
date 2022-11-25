@@ -6,4 +6,5 @@ class UserEndpoints {
   static const String put = "management/user/{id}";
   static const String delete = "management/user/{id}";
   static const String getClient = "management/user/client/";
+  static const String getProjClient = "management/user/project/{id}";
 }

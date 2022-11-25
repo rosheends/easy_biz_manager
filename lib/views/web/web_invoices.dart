@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
+import '../../manage_invoices.dart';
+
 class WebInvoiceWidget extends StatefulWidget {
   const WebInvoiceWidget({super.key});
 
@@ -48,7 +50,10 @@ class _WebInvoiceWidgetState extends State<WebInvoiceWidget> {
               color: Colors.white,
             ),
             onPressed: () {
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const GenerateInvoiceWidget()),
+              );
             },
           )
         ],

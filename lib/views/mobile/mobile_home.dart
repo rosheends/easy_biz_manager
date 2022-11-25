@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
 import '../../manage_clients.dart';
 import '../../utility/constants.dart';
+import 'mobile_invoices.dart';
 
 class MobileHomeWidget extends StatelessWidget {
   MobileHomeWidget({Key? key}) : super(key: key);
@@ -37,11 +38,11 @@ class MobileHomeWidget extends StatelessWidget {
     Item(
         title: 'Manage Invoice',
         icon: Icons.document_scanner_outlined,
-        screen: const ManageInvoiceWidget()),
+        screen: const MobileInvoiceWidget()),
     Item(
         title: 'Generate Reports',
         icon: Icons.insert_chart,
-        screen: GenerateReportsWidget()),
+        screen: const MobileInvoiceWidget()),
   ];
 
   @override

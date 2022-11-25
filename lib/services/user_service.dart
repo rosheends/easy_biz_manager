@@ -35,4 +35,9 @@ class UserService {
     ExecutorService service = ExecutorService();
     return service.delete(Util.getServiceHost() + UserEndpoints.delete, params);
   }
+
+  Future<dynamic> getProjClient(String id) async{
+    ExecutorService service = ExecutorService();
+    return service.get(Util.getServiceHost() +  "${UserEndpoints.getProjClient}/$id");
+  }
 }

@@ -43,6 +43,11 @@ class InvoiceService {
 
   Future<dynamic> createProject(Map<String, dynamic> params) async{
     ExecutorService service = ExecutorService();
-    return service.post(Util.getServiceHost() + ProjectEndpoints.post, params);
+    return service.post(Util.getServiceHost() + InvoiceEndpoints.post, params);
   }
+  Future<dynamic> getTotalExpense(String id) async {
+    ExecutorService service = ExecutorService();
+    return service.getAsList(Util.getServiceHost() + "${InvoiceEndpoints.getExp}/$id");
+  }
+
 }

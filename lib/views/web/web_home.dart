@@ -2,6 +2,7 @@ import 'package:easy_biz_manager/approve_reject_requests.dart';
 import 'package:easy_biz_manager/manage_expenses.dart';
 import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/reporting.dart';
+import 'package:easy_biz_manager/views/web/web_invoices.dart';
 import 'package:flutter/material.dart';
 import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,11 +38,11 @@ class WebHomeWidget extends StatelessWidget {
     Item(
         title: 'Manage Invoice',
         icon: Icons.document_scanner_outlined,
-        screen: const ManageInvoiceWidget()),
+        screen: const WebInvoiceWidget()),
     Item(
         title: 'Generate Reports',
         icon: Icons.insert_chart,
-        screen: GenerateReportsWidget()),
+        screen: const WebInvoiceWidget()),
   ];
 
   @override

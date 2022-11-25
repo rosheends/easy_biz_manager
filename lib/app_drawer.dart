@@ -1,4 +1,5 @@
 import 'package:easy_biz_manager/approve_reject_requests.dart';
+import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/manage_products.dart';
 import 'package:easy_biz_manager/manage_projects.dart';
 import 'package:easy_biz_manager/reporting.dart';
@@ -137,7 +138,7 @@ class AppDrawerWidget extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GenerateReportsWidget()),
+                  MaterialPageRoute(builder: (context) => const GenerateInvoiceWidget()),
                 );
               },
             ),

@@ -187,15 +187,18 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   TextEditingController projectNameCtrl = TextEditingController();
   TextEditingController descriptionCtrl = TextEditingController();
   TextEditingController timeBudgetCtrl = TextEditingController();
+  TextEditingController clientCtrl = TextEditingController();
 
   ProductService prodService = ProductService();
   ProjectService projService = ProjectService();
+  UserService userService = UserService();
   late List<dynamic>? _productList = [];
 
   @override
   void initState() {
     super.initState();
     _getProductData();
+    _getClientData();
     projectCodeCtrl.addListener(() {
       setState(() {
         _isBtnEnabled = false;
@@ -211,8 +214,18 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   }
 
   String? selectedProductValue;
+  String? selectedClientValue;
   Future<dynamic>? _futureProject;
   bool _isBtnEnabled = false;
+  late List<dynamic>? _clientList = [];
+
+  void _getClientData() async {
+    var temp = (await userService.getClients());
+    setState(() {
+      _clientList = temp;
+      selectedClientValue = _clientList![0]["id"].toString();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,6 +286,37 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 ),
               ),
             ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: DropdownButtonFormField(
+                    value: selectedClientValue,
+                    style: const TextStyle(
+                      color: Colors.black54, //<-- SEE HERE
+                      fontSize: 16,
+                    ),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedClientValue = newValue!;
+                        if (clientCtrl.text.isNotEmpty &&
+                            selectedClientValue != null) {
+                          _isBtnEnabled = true;
+                        }
+                      });
+                    },
+                    items: _clientList!.map((item) {
+                      return DropdownMenuItem(
+                        child: new Text(item['email'].toString()),
+                        value: item['id'].toString(),
+                      );
+                    }).toList(),
+                    decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      labelText: 'Select Client',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
