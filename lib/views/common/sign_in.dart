@@ -27,6 +27,12 @@ class _SignInWidgetState extends State<SignInWidget> {
   bool isValid = false;
 
   void _submit() {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+    );
+
     final isValid = _formKey.currentState?.validate();
 
     if (!isValid!) {

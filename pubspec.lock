@@ -139,6 +139,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_checkbox_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_checkbox_dialog
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -366,6 +373,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  searchable_listview:
+    dependency: "direct main"
+    description:
+      name: searchable_listview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   sky_engine:
     dependency: transitive
     description: flutter
