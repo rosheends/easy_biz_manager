@@ -10,6 +10,11 @@ class UserService {
     return service.get(Util.getServiceHost() + UserEndpoints.get);
   }
 
+  Future<dynamic> getUser(String id) async{
+    ExecutorService service = ExecutorService();
+    return service.getAsList(Util.getServiceHost() + UserEndpoints.getById.replaceAll("{id}", id));
+  }
+
   Future<dynamic> getClients() async{
     ExecutorService service = ExecutorService();
     return service.get(Util.getServiceHost() + UserEndpoints.getClient);

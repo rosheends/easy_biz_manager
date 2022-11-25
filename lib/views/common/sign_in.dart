@@ -1,10 +1,12 @@
 
 import 'package:easy_biz_manager/forgot_password.dart';
 import 'package:easy_biz_manager/services/authentication_service.dart';
+import 'package:easy_biz_manager/services/user_service.dart';
 import 'package:easy_biz_manager/utility/util.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:localstorage/localstorage.dart';
 
 import '../mobile/mobile_home.dart';
 
@@ -20,6 +22,7 @@ class _SignInWidgetState extends State<SignInWidget> {
   TextEditingController passwordController = TextEditingController();
   bool checkedValue = false;
   AuthService authService = AuthService();
+  UserService userService = UserService();
 
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
@@ -27,11 +30,6 @@ class _SignInWidgetState extends State<SignInWidget> {
   bool isValid = false;
 
   void _submit() {
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
-    );
 
     final isValid = _formKey.currentState?.validate();
 
@@ -42,14 +40,18 @@ class _SignInWidgetState extends State<SignInWidget> {
     authService.login({
       "username" : nameController.text,
       "password" : passwordController.text
-    }).then((value) => {
+    }).then((value) async => {
 
       if(value){
         _formKey.currentState?.save(),
-        Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
-        )
+        if((await userService.getUser(Util.loggedUser()['id'].toString()))["is_default_pwd"] == 1){
+          openDialog()
+        } else {
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+          )
+        },
       } else {
         Fluttertoast.showToast(
             msg: "Invalid user credentials",
@@ -69,14 +71,20 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   Future openDialog() => showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Change Password'),
         content: TextField(
-
           decoration: InputDecoration(hintText: 'New password'),
         ),
         actions: [
-          TextButton(onPressed: (){}, child: Text('SUBMIT'))
+          TextButton(onPressed: () async {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+            );
+          }, child: Text('SUBMIT'))
         ],
       ),
   );

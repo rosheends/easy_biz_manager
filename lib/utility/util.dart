@@ -34,9 +34,9 @@ class Util {
   }
 
   /// getLogged User
-  static String loggedUser(){
+  static Map<String, dynamic> loggedUser(){
     final LocalStorage storage = LocalStorage('biz_app');
     Map<String, dynamic> decodedToken = JwtDecoder.decode(storage.getItem("auth_key"));
-    return decodedToken["email"];
+    return decodedToken;
   }
 }

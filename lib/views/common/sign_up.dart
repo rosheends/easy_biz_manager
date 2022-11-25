@@ -1,6 +1,7 @@
 import 'package:easy_biz_manager/services/project_service.dart';
 import 'package:easy_biz_manager/services/role_service.dart';
 import 'package:easy_biz_manager/utility/encryptData.dart';
+import 'package:easy_biz_manager/utility/util.dart';
 import 'package:easy_biz_manager/views/common/sign_in.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,7 @@ class _UserListWidgetState extends State<UserListWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Users'),
-        actions: <Widget>[
+        actions: Util.loggedUser()["role_id"].toString() != "2" ? <Widget>[
           IconButton(
             icon: const Icon(
               Icons.add,
@@ -65,6 +66,7 @@ class _UserListWidgetState extends State<UserListWidget> {
               );
             },
           )
+        ] : <Widget>[
         ],
       ),
       body: loading
