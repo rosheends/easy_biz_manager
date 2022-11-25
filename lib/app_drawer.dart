@@ -5,12 +5,13 @@ import 'package:easy_biz_manager/reporting.dart';
 import 'package:easy_biz_manager/utility/constants.dart';
 import 'package:easy_biz_manager/utility/util.dart';
 import 'package:easy_biz_manager/views/common/sign_up.dart';
+import 'package:easy_biz_manager/views/mobile/mobile_invoices.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
+import 'package:easy_biz_manager/views/web/web_invoices.dart';
 import 'package:flutter/material.dart';
+import 'package:localstorage/localstorage.dart';
 import 'manage_projects.dart';
-import 'manage_clients.dart';
 import 'manage_expenses.dart';
-import 'manage_invoices.dart';
 import 'reporting.dart';
 import 'manage_products.dart';
 import 'views/mobile/mobile_home.dart';
@@ -125,10 +126,7 @@ class AppDrawerWidget extends StatelessWidget {
               horizontalTitleGap: 0,
               title: const Text('Invoices'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ManageInvoiceWidget()),
-                );
+                Util.routeNavigatorPush(context, MobileInvoiceWidget(), WebInvoiceWidget());
               },
             ),
             ListTile(
@@ -159,8 +157,9 @@ class AppDrawerWidget extends StatelessWidget {
               horizontalTitleGap: 0,
               title: const Text('Sign Out'),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                final LocalStorage storage = LocalStorage('biz_app');
+                storage.deleteItem("auth_key");
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
             ),
           ],

@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:localstorage/localstorage.dart';
 
 class ExecutorService {
+
   final Map<String, String> _headers = {
     "Accept": "application/json",
-    "Content-Type": "application/json; charset=UTF-8"
+    "Content-Type": "application/json; charset=UTF-8",
+    "Authorization": "Bearer ${LocalStorage('biz_app').getItem("auth_key")}"
   };
 
   Future<dynamic> get(String url) async {
@@ -14,7 +17,7 @@ class ExecutorService {
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
-      return json.decode(response.body).cast<Map<String, dynamic>>();
+      return json.decode(response.body).cast<dynamic>();
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
@@ -67,19 +70,20 @@ class ExecutorService {
     }
   }
 
-  // Future<bool> delete(String url, String projectId, String userId) async {
-  //   final response = await http.delete(Uri.parse(url.replaceAll("{id}", projectId).replaceAll("{id}", userId)), headers: _headers, body: jsonEncode(params));
-  //
-  //   if (response.statusCode == 200) {
-  //     // If the server did return a 201 CREATED response,
-  //     // then parse the JSON.
-  //     return true;
-  //   } else {
-  //     // If the server did not return a 201 CREATED response,
-  //     // then throw an exception.
-  //     return false;
-  //   }
-  // }
+  Future<dynamic> getAsList(String url) async {
+    final response = await http.get(Uri.parse(url), headers: _headers);
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map test = json.decode(response.body);
+      return test;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
 }
 
 

@@ -1,11 +1,10 @@
 
 import 'package:easy_biz_manager/forgot_password.dart';
+import 'package:easy_biz_manager/services/authentication_service.dart';
 import 'package:easy_biz_manager/utility/util.dart';
-import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../mobile/mobile_home.dart';
 
@@ -20,6 +19,7 @@ class _SignInWidgetState extends State<SignInWidget> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool checkedValue = false;
+  AuthService authService = AuthService();
 
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
@@ -28,14 +28,37 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   void _submit() {
     final isValid = _formKey.currentState?.validate();
+
     if (!isValid!) {
       return;
     }
-    _formKey.currentState?.save();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
-    );
+
+    authService.login({
+      "username" : nameController.text,
+      "password" : passwordController.text
+    }).then((value) => {
+
+      if(value){
+        _formKey.currentState?.save(),
+        Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+        )
+      } else {
+        Fluttertoast.showToast(
+            msg: "Invalid user credentials",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+            webBgColor: "linear-gradient(to right, #e55151, #e55151)",
+            webPosition: "right",
+        )
+      }
+    });
+
   }
 
   Future openDialog() => showDialog(
@@ -224,20 +247,13 @@ class _SignInWidgetState extends State<SignInWidget> {
                 },
               ),
             ),
-            // CheckboxListTile(
-            //   title: const Text("Remember Me"),
-            //   value: checkedValue,
-            //   onChanged: (bool? value) {
-            //     setState(() {
-            //       checkedValue = value!;
-            //     });
-            //   },
-            //   controlAffinity: ListTileControlAffinity.leading,
-            // ),
+            SizedBox(
+              height: 50,
+            ),
             Container(
                 height: 50,
                 width: 250,
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 decoration: BoxDecoration(
                     color: Colors.blue, borderRadius: BorderRadius.circular(10)),
                 child: ElevatedButton(

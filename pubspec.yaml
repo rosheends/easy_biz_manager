@@ -37,11 +37,15 @@ dependencies:
   google_fonts: ^3.0.1
   countries_list: ^0.1.7
   country_list_pick: ^1.0.1+6
+  intl: ^0.17.0
+  pdf: ^3.8.4
   encrypt: ^5.0.1
+  localstorage: ^4.0.0+1
+  jwt_decoder: ^2.0.1
+  fluttertoast: ^8.1.1
+  printing: ^5.9.3
   flutter_checkbox_dialog: ^0.0.1
   searchable_listview: ^2.1.1
-  pdf: ^3.8.4
-  printing: ^5.9.3
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +75,10 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/logo.png
+    - assets/images/invoice.svg
+    - assets/fonts/OpenSans-Regular.ttf
+    - assets/fonts/OpenSans-Bold.ttf
+    - assets/fonts/OpenSans-Italic.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
