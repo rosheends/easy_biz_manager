@@ -24,6 +24,7 @@ class _SignInWidgetState extends State<SignInWidget> {
   String? selectedValue;
   final _formKey = GlobalKey<FormState>();
   Future<dynamic>? _futureClient;
+  bool isValid = false;
 
   void _submit() {
     final isValid = _formKey.currentState?.validate();
@@ -37,9 +38,19 @@ class _SignInWidgetState extends State<SignInWidget> {
     );
   }
 
-  // bool isValidateLogin(String username, String pwd){
-  //
-  // }
+  Future openDialog() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Change Password'),
+        content: TextField(
+
+          decoration: InputDecoration(hintText: 'New password'),
+        ),
+        actions: [
+          TextButton(onPressed: (){}, child: Text('SUBMIT'))
+        ],
+      ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +85,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                         style: const TextStyle(fontSize: 16),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Invalid username';
+                            return 'Enter a valid username';
                           }
                           return null;
                         },
@@ -92,7 +103,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                         style: const TextStyle(fontSize: 16),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Invalid password';
+                            return 'Enter a valid password';
                           }
                           return null;
                         },
@@ -134,6 +145,10 @@ class _SignInWidgetState extends State<SignInWidget> {
                           child: const Text('Sign In', style: TextStyle(fontSize: 20)),
                           onPressed: () {
                             _submit();
+
+                            if (isValid){
+                              openDialog();
+                            }
 
                             // call validate function
                           },
@@ -185,7 +200,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                 style: const TextStyle(fontSize: 16),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Invalid username';
+                    return 'Enter a valid username';
                   }
                   return null;
                 },
@@ -203,7 +218,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                 style: const TextStyle(fontSize: 16),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Invalid password';
+                    return 'Enter a valid password';
                   }
                   return null;
                 },
@@ -229,6 +244,11 @@ class _SignInWidgetState extends State<SignInWidget> {
                   child: const Text('Sign In', style: TextStyle(fontSize: 20)),
                   onPressed: () {
                     _submit();
+
+                    if (isValid){
+                      openDialog();
+                    }
+
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
