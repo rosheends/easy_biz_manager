@@ -65,6 +65,20 @@ class ExecutorService {
       return false;
     }
   }
+
+  // Future<bool> delete(String url, String projectId, String userId) async {
+  //   final response = await http.delete(Uri.parse(url.replaceAll("{id}", projectId).replaceAll("{id}", userId)), headers: _headers, body: jsonEncode(params));
+  //
+  //   if (response.statusCode == 200) {
+  //     // If the server did return a 201 CREATED response,
+  //     // then parse the JSON.
+  //     return true;
+  //   } else {
+  //     // If the server did not return a 201 CREATED response,
+  //     // then throw an exception.
+  //     return false;
+  //   }
+  // }
 }
 
 

@@ -38,6 +38,7 @@ dependencies:
   countries_list: ^0.1.7
   country_list_pick: ^1.0.1+6
   encrypt: ^5.0.1
+  flutter_checkbox_dialog: ^0.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,11 @@
+import 'package:easy_biz_manager/assign_projects.dart';
+import 'package:easy_biz_manager/services/assign_users_service.dart';
 import 'package:easy_biz_manager/services/product_service.dart';
 import 'package:easy_biz_manager/services/project_service.dart';
+import 'package:easy_biz_manager/services/user_service.dart';
 import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
 import 'constant.dart' as constants;
@@ -168,7 +172,6 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   void initState() {
     super.initState();
     _getProductData();
-
     projectCodeCtrl.addListener(() {
       setState(() {
         _isBtnEnabled = false;
@@ -183,26 +186,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
     });
   }
 
-  // sample values
-  List<DropdownMenuItem<String>> get dropdownProductItems {
-    List<DropdownMenuItem<String>> menuProductItems = [
-      const DropdownMenuItem(value: "C001", child: Text("Supply Chain")),
-      const DropdownMenuItem(value: "C002", child: Text("Finance"))
-    ];
-    return menuProductItems;
-  }
-
-  // sample values
-  // List<DropdownMenuItem<String>> get dropdownClientItems {
-  //   List<DropdownMenuItem<String>> menuClientItems = [
-  //     const DropdownMenuItem(value: "C001", child: Text("Singer")),
-  //     const DropdownMenuItem(value: "C002", child: Text("Softlogic"))
-  //   ];
-  //   return menuClientItems;
-  // }
-
   String? selectedProductValue;
-  String? selectedClientValue;
   Future<dynamic>? _futureProject;
   bool _isBtnEnabled = false;
 
@@ -267,28 +251,6 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
             ),
             Container(
               padding: const EdgeInsets.all(10),
-              child: DropdownButtonFormField(
-                value: selectedClientValue,
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontSize: 16,
-                ),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedClientValue = newValue!;
-                  });
-                },
-                items: null,
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: 'Select Client',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: projectNameCtrl,
                 decoration: const InputDecoration(
@@ -313,7 +275,9 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
               padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: timeBudgetCtrl,
-                decoration: const InputDecoration(
+                keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Project Budget',
                 ),
@@ -349,7 +313,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MobileHomeWidget()),
+                                builder: (context) => const ManageProjectWidget()),
                           );
                         }
                       : null,
@@ -377,24 +341,27 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
   bool _isEditModeEnabled = false;
   Future<dynamic>? _updatedProduct;
   ProjectService projService = ProjectService();
+  UserService userService = UserService();
+  late List<dynamic>? _userList = [];
+  Future<bool>? _response;
 
   TextEditingController projectCodeCtrl = TextEditingController();
   TextEditingController projectNameCtrl = TextEditingController();
   TextEditingController descriptionCtrl = TextEditingController();
   TextEditingController timeBudgetCtrl = TextEditingController();
   TextEditingController productCodeCtrl = TextEditingController();
-  //TextEditingController clientInfoCtrl = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
+    _getUserData();
 
     projectCodeCtrl.text = widget.project["project_code"].toString();
     projectNameCtrl.text = widget.project["project_name"].toString();
     descriptionCtrl.text = widget.project["description"].toString();
     timeBudgetCtrl.text = widget.project["budget"].toString();
     productCodeCtrl.text = widget.project["product_code"].toString();
-    //var clientId = widget.project["description"].toString();
 
     //start listening to changes
     projectNameCtrl.addListener(() {
@@ -431,6 +398,13 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
     });
   }
 
+  void _getUserData() async {
+    var temp = (await userService.getUsers());
+    setState(() {
+      _userList = temp;
+    });
+  }
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -439,7 +413,6 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
     descriptionCtrl.dispose();
     timeBudgetCtrl.dispose();
     productCodeCtrl.dispose();
-    //clientInfoCtrl.dispose();
     super.dispose();
   }
 
@@ -453,6 +426,26 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(widget.project["project_code"]),
+            actions: <Widget>[
+              IconButton(
+                icon: const Icon(
+                  Icons.assignment_ind,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AssignProjects(
+                          id: widget.project["id"].toString()
+                      ),
+                    ),
+                  );
+                },
+              )
+            ],
+
+
           ),
           body: Form(
             child: ListView(
@@ -488,7 +481,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                     controller: projectCodeCtrl,
                     decoration: const InputDecoration(
                       // border: OutlineInputBorder(),
-                      labelText: 'Product Code *',
+                      labelText: 'Project Code *',
                     ),
                     style: const TextStyle(fontSize: 16),
                     enabled: false,
@@ -532,7 +525,9 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                   padding: const EdgeInsets.all(10),
                   child: TextFormField(
                     controller: timeBudgetCtrl,
-                    decoration: const InputDecoration(
+                    keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Project Budget',
                     ),
