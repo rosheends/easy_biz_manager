@@ -45,10 +45,12 @@ class ManageProjectWidget extends StatefulWidget {
 class _ManageProjectWidgetState extends State<ManageProjectWidget> {
   late Future<List<dynamic>> projectList;
   late List<dynamic>? _projectList = [];
+  late List<dynamic>? _tempProjList = [];
   bool loading = true;
   Future<dynamic>? updatedItem;
   Future<bool>? _response;
   ProjectService projService = ProjectService();
+  TextEditingController _textCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -57,9 +59,16 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
   }
 
   void _getData() async {
-    _projectList = (await projService.getProjects());
+    _tempProjList = (await projService.getProjects());
     setState(() {
       loading = false;
+      _projectList = _tempProjList;
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      _projectList = _tempProjList?.where((element) => element['project_code'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -92,58 +101,73 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
                 child: CircularProgressIndicator(),
               ),
             )
-          : ListView.separated(
-              itemCount: _projectList!.length,
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  // Step 1
-                  key: UniqueKey(),
-                  background: Container(color: Colors.red),
-                  secondaryBackground: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    child: const Icon(Icons.delete),
+          : Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    controller: _textCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'Search by Project Code...',
+                    ),
+                    onChanged: onItemChanged,
                   ),
-                  onDismissed: (direction) {
-                    // Step 2
-                    setState(() {
-                      _projectList!.removeAt(index);
-                      updatedItem =
-                          projService.deleteProject(_projectList![index]);
-                    });
-                    if (_projectList![index]['is_active'] == 1) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              '${_projectList![index]} successfully deleted')));
-                    } else {
-                      return;
-                    }
+                ),
+                Expanded(
+                    child: ListView.separated(
+                  itemCount: _projectList!.length,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      // Step 1
+                      key: UniqueKey(),
+                      background: Container(color: Colors.red),
+                      secondaryBackground: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        child: const Icon(Icons.delete),
+                      ),
+                      onDismissed: (direction) {
+                        // Step 2
+                        setState(() {
+                          _projectList!.removeAt(index);
+                          updatedItem =
+                              projService.deleteProject(_projectList![index]);
+                        });
+                        if (_projectList![index]['is_active'] == 1) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  '${_projectList![index]} successfully deleted')));
+                        } else {
+                          return;
+                        }
+                      },
+                      child: ListTile(
+                        title: Text(_projectList![index]['project_code']),
+                        subtitle: Text(_projectList![index]['project_code'] +
+                            " - " +
+                            _projectList![index]['description']),
+                        selectedColor: Colors.blueAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailProjectWidget(
+                                  project: _projectList![index]),
+                            ),
+                          );
+                        },
+                        // When a user taps the ListTile, navigate to the DetailScreen.
+                        // Notice that you're not only creating a DetailScreen, you're
+                        // also passing the current todo through to it.
+                        trailing: const Icon(Icons.more_vert),
+                      ),
+                    );
                   },
-                  child: ListTile(
-                    title: Text(_projectList![index]['project_code']),
-                    subtitle: Text(_projectList![index]['project_code'] +
-                        " - " +
-                        _projectList![index]['description']),
-                    selectedColor: Colors.blueAccent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailProjectWidget(
-                              project: _projectList![index]),
-                        ),
-                      );
-                    },
-                    // When a user taps the ListTile, navigate to the DetailScreen.
-                    // Notice that you're not only creating a DetailScreen, you're
-                    // also passing the current todo through to it.
-                    trailing: const Icon(Icons.more_vert),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
+                ))
+              ],
             ),
       drawer: const AppDrawerWidget(),
     );
@@ -276,8 +300,8 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
               child: TextField(
                 controller: timeBudgetCtrl,
                 keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Project Budget',
                 ),
@@ -313,7 +337,8 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ManageProjectWidget()),
+                                builder: (context) =>
+                                    const ManageProjectWidget()),
                           );
                         }
                       : null,
@@ -350,7 +375,6 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
   TextEditingController descriptionCtrl = TextEditingController();
   TextEditingController timeBudgetCtrl = TextEditingController();
   TextEditingController productCodeCtrl = TextEditingController();
-
 
   @override
   void initState() {
@@ -436,16 +460,13 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AssignProjects(
-                          id: widget.project["id"].toString()
-                      ),
+                      builder: (context) =>
+                          AssignProjects(id: widget.project["id"].toString()),
                     ),
                   );
                 },
               )
             ],
-
-
           ),
           body: Form(
             child: ListView(
@@ -526,8 +547,8 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                   child: TextFormField(
                     controller: timeBudgetCtrl,
                     keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Project Budget',
                     ),

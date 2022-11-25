@@ -17,10 +17,13 @@ class ManageExpenseWidget extends StatefulWidget {
 class _ManageExpenseWidgetState extends State<ManageExpenseWidget> {
   late Future<List<dynamic>> expList;
   late List<dynamic>? _expList = [];
+  late List<dynamic>? _tempExpList = [];
   bool loading = true;
   bool? updatedItem;
   Future<bool>? _response;
   ExpenseService expService = ExpenseService();
+
+  TextEditingController _textCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -29,9 +32,16 @@ class _ManageExpenseWidgetState extends State<ManageExpenseWidget> {
   }
 
   void _getExpData() async {
-    _expList = (await expService.getExpenses());
+    _tempExpList = (await expService.getExpenses());
     setState(() {
       loading = false;
+      _expList = _tempExpList;
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      _expList = _tempExpList?.where((element) => element['project_code'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -71,51 +81,66 @@ class _ManageExpenseWidgetState extends State<ManageExpenseWidget> {
           height: 30,
           child: CircularProgressIndicator(),
         ),
+      ): Column(
 
-      )
-        : ListView.separated(
-        itemCount: _expList!.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            // Step 1
-            key: UniqueKey(),
-            background: Container(color: Colors.red),
-            secondaryBackground: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              child: const Icon(Icons.delete),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: TextField(
+                controller: _textCtrl,
+                decoration: InputDecoration(
+                  hintText: 'Search by Project Code...',
+                ),
+                onChanged: onItemChanged,
+              ),
             ),
-            onDismissed: (direction) {
-              // Step 2
-              setState(() {
-                //_response = expService.deleteExpense(_expList![index]);
-                //_expList!.removeAt(index);
-              });
-               },
-            child: ListTile(
-              title: Text(_expList![index]['project_code'].toString() +
-                  "\nAmount " + _expList![index]['amount'].toString()),
-              subtitle: Text("Status: " + _expList![index]['exp_status'].toString()),
-              selectedColor: Colors.blueAccent,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        DetailExpenseWidget(expense: _expList![index])
-                  ),
-                );
-              },
-              // When a user taps the ListTile, navigate to the DetailScreen.
-              // Notice that you're not only creating a DetailScreen, you're
-              // also passing the current todo through to it.
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
-      ),
+            Expanded(
+              child: ListView.separated(
+                itemCount: _expList!.length,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    // Step 1
+                    key: UniqueKey(),
+                    background: Container(color: Colors.red),
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      child: const Icon(Icons.delete),
+                    ),
+                    onDismissed: (direction) {
+                      // Step 2
+                      setState(() {
+                        //_response = expService.deleteExpense(_expList![index]);
+                        //_expList!.removeAt(index);
+                      });
+                    },
+                    child: ListTile(
+                      title: Text(_expList![index]['project_code'].toString() +
+                          "\nAmount " + _expList![index]['amount'].toString()),
+                      subtitle: Text("Status: " + _expList![index]['exp_status'].toString()),
+                      selectedColor: Colors.blueAccent,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailExpenseWidget(expense: _expList![index])
+                          ),
+                        );
+                      },
+                      // When a user taps the ListTile, navigate to the DetailScreen.
+                      // Notice that you're not only creating a DetailScreen, you're
+                      // also passing the current todo through to it.
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+              )
+            )
+          ],
+        ),
       drawer: const AppDrawerWidget(),
     );
   }

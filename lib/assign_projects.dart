@@ -20,9 +20,11 @@ class AssignProjects extends StatefulWidget {
 class _AssignProjectsState extends State<AssignProjects> {
   bool loading = true;
   late List<dynamic> _assignedUserList = [];
+  late List<dynamic> _tempAssignedUserList = [];
   final AssignUserService _assignedUserService = AssignUserService();
   Future<bool>? _response;
   var checkboxValue = false;
+  TextEditingController _textCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -31,10 +33,20 @@ class _AssignProjectsState extends State<AssignProjects> {
   }
 
   void _getAssignedUserList() async {
-    _assignedUserList =
+    _tempAssignedUserList =
         (await _assignedUserService.getAssignedUsers(widget.id));
     setState(() {
       loading = false;
+      if (_tempAssignedUserList != null) {
+        _assignedUserList = _tempAssignedUserList;
+      }
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      _assignedUserList = _tempAssignedUserList.where((element) => element['role_desc'].toLowerCase().contains(value.toLowerCase()) ||
+          element['first_name'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -67,8 +79,19 @@ class _AssignProjectsState extends State<AssignProjects> {
                 height: 30,
                 child: CircularProgressIndicator(),
               ),
-            )
-          : ListView.separated(
+            ):Column(children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: TextField(
+            controller: _textCtrl,
+            decoration: InputDecoration(
+              hintText: 'Search by User Name / User Role',
+            ),
+            onChanged: onItemChanged,
+          ),
+        ),
+        Expanded(
+            child: ListView.separated(
               itemCount: _assignedUserList.length,
               itemBuilder: (context, index) {
                 return Dismissible(
@@ -112,13 +135,16 @@ class _AssignProjectsState extends State<AssignProjects> {
                   ),
                 );
               },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
-            ),
+      separatorBuilder: (context, index) {
+        return const Divider();
+      },
+            )),
+      ]
+    ),
       // drawer: const AppDrawerWidget(),
     );
   }
+}
 
   Future<bool> delete(String projectId, String userId) async {
     final response = await http.delete(
@@ -138,7 +164,7 @@ class _AssignProjectsState extends State<AssignProjects> {
       return false;
     }
   }
-}
+
 
 class AddProjectAssignment extends StatefulWidget {
   const AddProjectAssignment({super.key, required this.assignedUserList, required this.projId});

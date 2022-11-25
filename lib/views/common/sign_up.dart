@@ -19,12 +19,12 @@ class UserListWidget extends StatefulWidget {
 class _UserListWidgetState extends State<UserListWidget> {
   late Future<List<dynamic>> userList;
   late List<dynamic>? _userList = [];
+  late List<dynamic>? _tempUserList = [];
   bool loading = true;
   bool? updatedItem;
   Future<bool>? _response;
   UserService userService = UserService();
-  Icon customIcon = const Icon(Icons.search);
-  Widget customSearchBar = const Text('Users');
+  TextEditingController _textCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -33,9 +33,17 @@ class _UserListWidgetState extends State<UserListWidget> {
   }
 
   void _getData() async {
-    _userList = (await userService.getUsers());
+    _tempUserList = (await userService.getUsers());
     setState(() {
       loading = false;
+      _userList = _tempUserList;
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      _userList = _tempUserList?.where((element) => element['role_desc'].toLowerCase().contains(value.toLowerCase()) ||
+          element['first_name'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -45,44 +53,6 @@ class _UserListWidgetState extends State<UserListWidget> {
       appBar: AppBar(
         title: const Text('Users'),
         actions: <Widget>[
-
-          // PopupMenuButton(
-          //   // add icon, by default "3 dot" icon
-          //    icon: const Icon(Icons.add),
-          //     itemBuilder: (context){
-          //       return [
-          //         const PopupMenuItem<int>(
-          //           value: 0,
-          //           child: Text("Add User"),
-          //         ),
-          //
-          //         const PopupMenuItem<int>(
-          //           value: 1,
-          //           child: Text("Assign project"),
-          //         ),
-          //
-          //       ];
-          //     },
-          //     onSelected:(value){
-          //       if(value == 0){
-          //           Navigator.push(
-          //             context,
-          //             MaterialPageRoute(builder: (context) => const SignUpWidget()),
-          //           );
-          //       }else if(value == 1){
-          //         print("Settings menu is selected.");
-          //       }
-          //     }
-          // ),
-          IconButton(
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              //showSearch(context: context, delegate: MySearchDelegate());
-            },
-          ),
           IconButton(
             icon: const Icon(
               Icons.add,
@@ -105,56 +75,75 @@ class _UserListWidgetState extends State<UserListWidget> {
                 child: CircularProgressIndicator(),
               ),
             )
-          : ListView.separated(
-              itemCount: _userList!.length,
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  // Step 1
-                  key: UniqueKey(),
-                  background: Container(color: Colors.red),
-                  secondaryBackground: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    child: const Icon(Icons.delete),
+          : Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    controller: _textCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'Search by User Name / User Role',
+                    ),
+                    onChanged: onItemChanged,
                   ),
-                  onDismissed: (direction) {
-                    // Step 2
-                    setState(() {
-                      _response = userService.deleteUser(_userList![index]);
-                      _userList!.removeAt(index);
-                    });
-                    if (_response != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('User successfully deleted')));
-                    } else {
-                      return;
-                    }
+                ),
+                Expanded(
+                    child: ListView.separated(
+                  itemCount: _userList!.length,
+                  itemBuilder: (context, index) {
+                    return Dismissible(
+                      // Step 1
+                      key: UniqueKey(),
+                      background: Container(color: Colors.red),
+                      secondaryBackground: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        child: const Icon(Icons.delete),
+                      ),
+                      onDismissed: (direction) {
+                        // Step 2
+                        setState(() {
+                          _response = userService.deleteUser(_userList![index]);
+                          _userList!.removeAt(index);
+                        });
+                        if (_response != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('User successfully deleted')));
+                        } else {
+                          return;
+                        }
+                      },
+                      child: ListTile(
+                        title: Text(_userList![index]['first_name'] +
+                            " " +
+                            _userList![index]['last_name'] +
+                            " (" +
+                            _userList![index]['role_desc'] +
+                            ")"),
+                        subtitle: Text(_userList![index]['email'].toString()),
+                        selectedColor: Colors.blueAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailUserWidget(user: _userList![index]),
+                            ),
+                          );
+                        },
+                        // When a user taps the ListTile, navigate to the DetailScreen.
+                        // Notice that you're not only creating a DetailScreen, you're
+                        // also passing the current todo through to it.
+                        trailing: const Icon(Icons.more_vert),
+                      ),
+                    );
                   },
-                  child: ListTile(
-                    title: Text(_userList![index]['first_name'] +
-                        " " +
-                        _userList![index]['last_name']  + " (" + _userList![index]['role_desc'] + ")"),
-                    subtitle: Text(_userList![index]['email'].toString()),
-                    selectedColor: Colors.blueAccent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DetailUserWidget(user: _userList![index]),
-                        ),
-                      );
-                    },
-                    // When a user taps the ListTile, navigate to the DetailScreen.
-                    // Notice that you're not only creating a DetailScreen, you're
-                    // also passing the current todo through to it.
-                    trailing: const Icon(Icons.more_vert),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
+                ))
+              ],
             ),
       drawer: const AppDrawerWidget(),
     );
@@ -209,7 +198,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     }
     _formKey.currentState?.save();
     // encryptedPwd = pwdEncryption.encryptPwd(password.text);
-
   }
 
   @override
@@ -406,11 +394,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             borderRadius: BorderRadius.circular(20.0)),
                         minimumSize: const Size(45, 45),
                       ),
-                      child:
-                          const Text('Save', style: TextStyle(fontSize: 20)),
+                      child: const Text('Save', style: TextStyle(fontSize: 20)),
                       onPressed: () {
                         _submit();
-                        if (isValid == true){
+                        if (isValid == true) {
                           setState(() {
                             _futureUser = userService.createUser({
                               "first_name": firstName.text,
@@ -430,7 +417,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           });
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const UserListWidget()),
+                            MaterialPageRoute(
+                                builder: (context) => const UserListWidget()),
                           );
                         }
 

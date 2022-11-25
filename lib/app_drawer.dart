@@ -139,7 +139,7 @@ class AppDrawerWidget extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const GenerateReportsWidget()),
+                  MaterialPageRoute(builder: (context) => GenerateReportsWidget()),
                 );
               },
             ),

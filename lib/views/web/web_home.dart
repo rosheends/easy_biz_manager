@@ -41,7 +41,7 @@ class WebHomeWidget extends StatelessWidget {
     Item(
         title: 'Generate Reports',
         icon: Icons.insert_chart,
-        screen: const GenerateReportsWidget()),
+        screen: GenerateReportsWidget()),
   ];
 
   @override

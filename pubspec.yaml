@@ -40,6 +40,8 @@ dependencies:
   encrypt: ^5.0.1
   flutter_checkbox_dialog: ^0.0.1
   searchable_listview: ^2.1.1
+  pdf: ^3.8.4
+  printing: ^5.9.3
 
 dev_dependencies:
   flutter_test:
