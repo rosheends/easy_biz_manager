@@ -1,3 +1,4 @@
+import 'package:easy_biz_manager/approve_reject_requests.dart';
 import 'package:easy_biz_manager/manage_products.dart';
 import 'package:easy_biz_manager/manage_projects.dart';
 import 'package:easy_biz_manager/reporting.dart';
@@ -103,6 +104,18 @@ class AppDrawerWidget extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ManageExpenseWidget()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.paid_rounded),
+              iconColor: Colors.blue,
+              horizontalTitleGap: 0,
+              title: const Text('Expense Approval'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ExpenseRequestsWidget()),
                 );
               },
             ),
