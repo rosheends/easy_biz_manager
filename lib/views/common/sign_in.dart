@@ -44,14 +44,14 @@ class _SignInWidgetState extends State<SignInWidget> {
 
       if(value){
         _formKey.currentState?.save(),
-        if((await userService.getUser(Util.loggedUser()['id'].toString()))["is_default_pwd"] == 1){
-          openDialog()
-        } else {
+        // if((await userService.getUser(Util.loggedUser()['id'].toString()))["is_default_pwd"] == 1){
+        //   openDialog()
+        // } else {
           Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
           )
-        },
+       // },
       } else {
         Fluttertoast.showToast(
             msg: "Invalid user credentials",

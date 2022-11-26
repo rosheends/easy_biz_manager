@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
 import '../../manage_clients.dart';
 import '../../utility/constants.dart';
+import '../../utility/util.dart';
 import 'mobile_invoices.dart';
 
 class MobileHomeWidget extends StatelessWidget {
@@ -32,10 +33,6 @@ class MobileHomeWidget extends StatelessWidget {
         icon: Icons.paid_rounded,
         screen: const ManageExpenseWidget()),
     Item(
-        title: 'Expense Approval',
-        icon: Icons.approval,
-        screen: const ExpenseRequestsWidget()),
-    Item(
         title: 'Manage Invoice',
         icon: Icons.document_scanner_outlined,
         screen: const MobileInvoiceWidget()),
@@ -47,6 +44,29 @@ class MobileHomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    if(["1", "3"].contains(Util.loggedUser()["role_id"].toString())){
+      items.add(
+        Item(
+            title: 'Expense Approval',
+            icon: Icons.approval,
+            screen: const ExpenseRequestsWidget())
+      );
+    }
+
+    if(["5"].contains(Util.loggedUser()["role_id"].toString())){
+      items = [
+        Item(
+            title: 'Manage Projects',
+            icon: Icons.description_outlined,
+            screen: const ManageProjectWidget()),
+        Item(
+            title: 'Manage Expenses',
+            icon: Icons.paid_rounded,
+            screen: const ManageExpenseWidget()),
+      ];
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(Constants.appName),

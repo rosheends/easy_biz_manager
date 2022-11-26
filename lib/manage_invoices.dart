@@ -150,6 +150,7 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
                       labelText: 'Total Amount',
                     ),
                     style: const TextStyle(fontSize: 16),
+                    enabled: false,
                   ),
                 ),
                 const SizedBox(

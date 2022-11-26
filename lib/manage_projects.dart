@@ -3,6 +3,7 @@ import 'package:easy_biz_manager/services/assign_users_service.dart';
 import 'package:easy_biz_manager/services/product_service.dart';
 import 'package:easy_biz_manager/services/project_service.dart';
 import 'package:easy_biz_manager/services/user_service.dart';
+import 'package:easy_biz_manager/utility/util.dart';
 import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,7 +69,11 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
 
   onItemChanged(String value) {
     setState(() {
-      _projectList = _tempProjList?.where((element) => element['project_code'].toLowerCase().contains(value.toLowerCase())).toList();
+      _projectList = _tempProjList
+          ?.where((element) => element['project_code']
+              .toLowerCase()
+              .contains(value.toLowerCase()))
+          .toList();
     });
   }
 
@@ -77,7 +82,7 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Projects'),
-        actions: <Widget>[
+        actions: Util.loggedUser()["role_id"].toString() == "1" ? <Widget>[
           IconButton(
             icon: const Icon(
               Icons.add,
@@ -91,6 +96,7 @@ class _ManageProjectWidgetState extends State<ManageProjectWidget> {
               );
             },
           )
+        ]: <Widget>[
         ],
       ),
       body: loading
@@ -188,6 +194,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
   TextEditingController descriptionCtrl = TextEditingController();
   TextEditingController timeBudgetCtrl = TextEditingController();
   TextEditingController clientCtrl = TextEditingController();
+  TextEditingController severityCtrl = TextEditingController();
 
   ProductService prodService = ProductService();
   ProjectService projService = ProjectService();
@@ -205,6 +212,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
       });
     });
   }
+
 
   void _getProductData() async {
     var temp = (await prodService.getProducts());
@@ -286,37 +294,37 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 ),
               ),
             ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: DropdownButtonFormField(
-                    value: selectedClientValue,
-                    style: const TextStyle(
-                      color: Colors.black54, //<-- SEE HERE
-                      fontSize: 16,
-                    ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedClientValue = newValue!;
-                        if (clientCtrl.text.isNotEmpty &&
-                            selectedClientValue != null) {
-                          _isBtnEnabled = true;
-                        }
-                      });
-                    },
-                    items: _clientList!.map((item) {
-                      return DropdownMenuItem(
-                        child: new Text(item['email'].toString()),
-                        value: item['id'].toString(),
-                      );
-                    }).toList(),
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      labelText: 'Select Client',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: DropdownButtonFormField(
+                value: selectedClientValue,
+                style: const TextStyle(
+                  color: Colors.black54, //<-- SEE HERE
+                  fontSize: 16,
                 ),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedClientValue = newValue!;
+                    if (clientCtrl.text.isNotEmpty &&
+                        selectedClientValue != null) {
+                      _isBtnEnabled = true;
+                    }
+                  });
+                },
+                items: _clientList!.map((item) {
+                  return DropdownMenuItem(
+                    child: new Text(item['email'].toString()),
+                    value: item['id'].toString(),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: 'Select Client',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(10),
               child: TextField(
@@ -367,23 +375,29 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                     minimumSize: const Size(50, 50),
                   ),
                   onPressed: _isBtnEnabled
-                      ? () {
-                          setState(() {
-                            _futureProject = projService.createProject({
-                              "project_code": projectCodeCtrl.text,
-                              "project_name": descriptionCtrl.text,
-                              "description": descriptionCtrl.text,
-                              "budget": timeBudgetCtrl.text,
-                              "is_active": 1,
-                              "product_code": selectedProductValue,
-                            });
+                      ? ()  {
+
+                          _futureProject = projService.createProject({
+                            "project_code": projectCodeCtrl.text,
+                            "project_name": projectNameCtrl.text,
+                            "description": descriptionCtrl.text,
+                            "budget": timeBudgetCtrl.text,
+                            "is_active": 1,
+                            "product_code": selectedProductValue,
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ManageProjectWidget()),
-                          );
+
+                          setState(() {
+
+                          });
+
+                          if (_futureProject != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ManageProjectWidget()),
+                            );
+                          }
                         }
                       : null,
                   child: const Text('Save', style: TextStyle(fontSize: 20)),
@@ -629,12 +643,14 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                                   "id": widget.project["id"],
                                 });
                               });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ManageProjectWidget()),
-                              );
+                              if (_updatedProduct != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ManageProjectWidget()),
+                                );
+                              }
                             }
                           : null,
                       child: const Text('Save'),

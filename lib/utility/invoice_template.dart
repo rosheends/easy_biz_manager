@@ -21,7 +21,7 @@ Future<Uint8List> generateInvoice(Map<String, dynamic> data) async {
     customerName: data['client_name'],
     customerAddress: '54 rue de Rivoli\n75001 Paris, France',
     paymentInfo:
-    '4509 Wiseman Street\nKnoxville, Tennessee(TN), 37929\n865-372-0425',
+    'Testen Lanka Company, (Pvt) Ltd.',
     tax: .15,
     baseColor: PdfColors.teal,
     accentColor: PdfColors.blueGrey900,
@@ -61,8 +61,7 @@ class Invoice {
 
   PdfColor get _accentTextColor => baseColor.isLight ? _lightColor : _darkColor;
 
-  double get _total =>
-      products.map<double>((p) => p.total).reduce((a, b) => a + b);
+  double get _total => products.map<double>((p) => p.total).reduce((a, b) => a + b);
 
   double get _grandTotal => _total * (1 + tax);
 
@@ -351,7 +350,7 @@ class Invoice {
                 ),
               ),
               pw.Text(
-                pw.LoremText().paragraph(40),
+                'Terms and Conditions will be applied as per the agreement we had.',
                 textAlign: pw.TextAlign.justify,
                 style: const pw.TextStyle(
                   fontSize: 6,

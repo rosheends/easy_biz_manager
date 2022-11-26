@@ -53,7 +53,7 @@ class _UserListWidgetState extends State<UserListWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Users'),
-        actions: Util.loggedUser()["role_id"].toString() != "2" ? <Widget>[
+        actions: Util.loggedUser()["role_id"].toString() == "1"  ? <Widget>[
           IconButton(
             icon: const Icon(
               Icons.add,

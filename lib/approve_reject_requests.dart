@@ -20,6 +20,8 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
   ExpenseService expService = ExpenseService();
   Future<dynamic>? _updatedExpense;
   bool status = true;
+  TextEditingController _textCtrl = TextEditingController();
+  late List<dynamic>? _tempExpList = [];
 
   @override
   void initState() {
@@ -48,6 +50,12 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
     setState(() {
       loading = false;
       _expList = temp;
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      _expList = _expList?.where((element) => element['project_code'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -104,8 +112,19 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
           child: CircularProgressIndicator(),
         ),
 
-      )
-          : ListView.separated(
+      ): Column(children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: TextField(
+            controller: _textCtrl,
+            decoration: InputDecoration(
+              hintText: 'Search by Project Code...',
+            ),
+            onChanged: onItemChanged,
+          ),
+        ),
+        Expanded(
+            child: ListView.separated(
         itemCount: _expList!.length,
         itemBuilder: (context, index) {
           return Dismissible(
@@ -176,11 +195,14 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
             ),
           );
         },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
-      ),
-      drawer: const AppDrawerWidget(),
+      separatorBuilder: (context, index) {
+        return const Divider();
+      },
+    )
+    )
+    ],
+    ),
+    drawer: const AppDrawerWidget(),
     );
   }
 }

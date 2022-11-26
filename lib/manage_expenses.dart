@@ -292,10 +292,13 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                               "is_active": 1,
                             });
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const ManageExpenseWidget()),
-                          );
+                          if (_futureExp != null){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ManageExpenseWidget()),
+                            );
+                          }
+
                         }
 
                         // if (_futureUser != null  ){
@@ -451,9 +454,11 @@ class _DetailExpenseWidgetState extends State<DetailExpenseWidget> {
                   padding: const EdgeInsets.all(10),
                   child: TextFormField(
                     controller: amountCtrl,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Email',
+                      labelText: 'Amount',
                     ),
                     style: const TextStyle(fontSize: 16),
                     validator: (value) {

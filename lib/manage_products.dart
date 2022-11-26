@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_biz_manager/utility/util.dart';
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:http/http.dart' as http;
@@ -65,9 +66,10 @@ class _ManageProductsWidgetState extends State<ManageProductsWidget> {
   }
 
   void _getData() async {
-    _productList = (await fetchProductList());
+    var temp = (await fetchProductList());
     setState(() {
       _loading = false;
+      _productList = temp;
     });
   }
 
@@ -76,7 +78,7 @@ class _ManageProductsWidgetState extends State<ManageProductsWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Products'),
-        actions: <Widget>[
+        actions: Util.loggedUser()["role_id"].toString() == "1" ? <Widget>[
           IconButton(
             icon: const Icon(
               Icons.add,
@@ -90,6 +92,7 @@ class _ManageProductsWidgetState extends State<ManageProductsWidget> {
               );
             },
           )
+        ]: <Widget>[
         ],
       ),
 
@@ -171,12 +174,14 @@ class _AddProductWidgetState extends State<AddProductWidget> {
   TextEditingController productCode = TextEditingController();
   TextEditingController description = TextEditingController();
   Future<Product>? _futureProduct;
+  Future<Product>? _futureProdSeverity;
   bool _isBtnEnabled = false;
 
   @override
   void initState() {
     super.initState();
     //start listening to changes
+
     productCode.addListener(() {
       setState(() {
         if (productCode.text.isNotEmpty) {
@@ -258,7 +263,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                         ? () {
                       setState(() {
                         _futureProduct =
-                            createProduct(productCode.text, description.text);
+                             createProduct(productCode.text, description.text);
                       });
                       Navigator.push(
                         context,
