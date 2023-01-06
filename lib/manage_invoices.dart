@@ -79,6 +79,7 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
   String? selectedProjValue;
   Future<dynamic>? _futureProject;
   Future<dynamic>? _futureInvoice;
+  Future<dynamic>? _futureExpenceInvId;
   bool _isBtnEnabled = false;
 
   @override
@@ -106,9 +107,15 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
                           _projId = element["id"].toString();
                           projectBudgetCtrl.text = Util.printAmount(double.parse(element["budget"].toString()));
                           _totalExp = await invService.getTotalExpense(element["id"].toString());
-                          _totalAmount = (_totalExp["totExp"] + double.tryParse(element["budget"])) * 1.15;
-                          print(_totalAmount);
-                          totAmountCtrl.text = Util.printAmount(_totalAmount);
+                          if (_totalExp["totExp"] != null){
+                            _totalAmount = (_totalExp["totExp"] + double.tryParse(element["budget"])) * 1.15;
+                            print(_totalAmount);
+                            totAmountCtrl.text = Util.printAmount(_totalAmount);
+                          }else{
+                            _totalAmount = double.parse(element["budget"]);
+                            totAmountCtrl.text = Util.printAmount(_totalAmount);
+                          }
+
                         }
                       });
                       setState(() {
@@ -169,16 +176,22 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
                       onPressed: () {
                         //var temp = userService.getProjClient(_projId);
                         setState(() {
-                          _futureInvoice =  invService.createProject({
-                            "user_id": 1,//temp[0]["user_id"].toString(),
+                          _futureInvoice = invService.createInvoice({
+                            "user_id": 1, //temp[0]["user_id"].toString(),
                             "invoice_date": DateTime.now().toString(),
                             "due_date": DateTime.now().toString(),
                             "late_fee": 0,
                             "total_amount": _totalAmount,
                             "title": "Invoice Report",
                             "payment_status": "Pending",
+                            "project_id": int.tryParse(_projId),
                           });
                         });
+
+                        // _futureExpenceInvId = invService.updateInvId({
+                        //   "invoice_id"
+                        //
+                        // });
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
                                 'Invoice successfully created')));

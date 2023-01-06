@@ -9,29 +9,29 @@ class InvoiceService {
   Future<dynamic> getInvoice(String id) async{
     ExecutorService service = ExecutorService();
 
-    [
-      {
-        'invoice_id' : '00001',
-        'user' : 'Client A',
-        'amount' : 2000.00,
-        'status' : 'pending',
-        'created_date' : '2022-11-11'
-      },
-      {
-        'invoice_id' : '00002',
-        'user' : 'Client B',
-        'amount' : 3000.40,
-        'status' : 'pending',
-        'created_date' : '2022-11-12'
-      },
-      {
-        'invoice_id' : '00003',
-        'user' : 'Client C',
-        'amount' : 400.00,
-        'status' : 'paid',
-        'created_date' : '2022-11-13'
-      },
-    ];
+    // [
+    //   {
+    //     'invoice_id' : '00001',
+    //     'user' : 'Client A',
+    //     'amount' : 2000.00,
+    //     'status' : 'pending',
+    //     'created_date' : '2022-11-11'
+    //   },
+    //   {
+    //     'invoice_id' : '00002',
+    //     'user' : 'Client B',
+    //     'amount' : 3000.40,
+    //     'status' : 'pending',
+    //     'created_date' : '2022-11-12'
+    //   },
+    //   {
+    //     'invoice_id' : '00003',
+    //     'user' : 'Client C',
+    //     'amount' : 400.00,
+    //     'status' : 'paid',
+    //     'created_date' : '2022-11-13'
+    //   },
+    // ];
 
     return service.getAsList(Util.getServiceHost() + InvoiceEndpoints.get.replaceAll("{id}", id));
   }
@@ -41,13 +41,23 @@ class InvoiceService {
     return service.get(Util.getServiceHost() + InvoiceEndpoints.getAll);
   }
 
-  Future<dynamic> createProject(Map<String, dynamic> params) async{
+  Future<dynamic> createInvoice(Map<String, dynamic> params) async{
     ExecutorService service = ExecutorService();
     return service.post(Util.getServiceHost() + InvoiceEndpoints.post, params);
   }
   Future<dynamic> getTotalExpense(String id) async {
     ExecutorService service = ExecutorService();
     return service.getAsList(Util.getServiceHost() + "${InvoiceEndpoints.getExp}/$id");
+  }
+
+  Future<dynamic> updateInvId(Map<String, dynamic> params) async{
+    ExecutorService service = ExecutorService();
+    return service.put(Util.getServiceHost() + InvoiceEndpoints.putInvId, params);
+  }
+
+  Future<dynamic> updateInvStatus(Map<String, dynamic> params) async{
+    ExecutorService service = ExecutorService();
+    return service.put(Util.getServiceHost() + InvoiceEndpoints.putInvStatus, params);
   }
 
 }

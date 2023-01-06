@@ -22,6 +22,7 @@ class _MobileInvoiceWidgetState extends State<MobileInvoiceWidget> {
   late List<dynamic>? _invoices = [];
   bool _loading = true;
   InvoiceService service = InvoiceService();
+  Future<dynamic>? _futureInvExp;
 
   @override
   void initState() {
@@ -163,6 +164,33 @@ class _MobileInvoiceWidgetState extends State<MobileInvoiceWidget> {
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700)),
                       ),
+
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: data['payment_status'].toString().toLowerCase() != 'paid' ?
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.lightBlue[50],
+                          onPrimary: Colors.green,
+                          shadowColor: Colors.lightBlue[50],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          minimumSize: const Size(30, 30),
+                        ),
+                        onPressed: ()  {
+                          setState(() {
+                            _futureInvExp = service.updateInvStatus({
+                              "id": data['id'].toString(), //temp[0]["user_id"].toString(),
+                              "payment_status": "Paid",
+                            });
+                          });
+                          _getData();
+
+                        },
+                        child: const Text('Mark as Paid', style: TextStyle(fontSize: 10)),
+                      ) : const Text(""),
+
                     ),
                   ],
                 ),

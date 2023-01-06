@@ -289,7 +289,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 decoration: const InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
-                  labelText: 'Select Product',
+                  labelText: 'Select Category',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -355,7 +355,7 @@ class _AddProjectWidgetState extends State<AddProjectWidget> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Project Budget',
+                  labelText: 'Project Initial Budget',
                 ),
                 style: const TextStyle(fontSize: 16),
               ),
@@ -536,7 +536,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                     controller: productCodeCtrl,
                     decoration: const InputDecoration(
                       //border: OutlineInputBorder(),
-                      labelText: 'Product Code *',
+                      labelText: 'Category Code *',
                     ),
                     style: const TextStyle(fontSize: 16),
                     enabled: false,
@@ -608,7 +608,7 @@ class _DetailProjectWidgetState extends State<DetailProjectWidget> {
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Project Budget',
+                      labelText: 'Project Initial Budget',
                     ),
                     style: const TextStyle(fontSize: 16),
                     validator: (value) {

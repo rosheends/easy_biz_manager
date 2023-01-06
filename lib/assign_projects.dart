@@ -250,6 +250,7 @@ class _AddProjectAssignmentState extends State<AddProjectAssignment> {
           itemBuilder: (context, index) {
             return CheckboxListTile(
               title: Text(_unAssignedUserList![index]["email"].toString()),
+              subtitle: Text(_unAssignedUserList![index]["role_desc"].toString()),
               value: _unAssignedUserList![index]["selected"],
               onChanged: (bool? value) {
                 setState(() {

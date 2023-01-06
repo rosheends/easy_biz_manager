@@ -40,7 +40,7 @@ Future<List<Product>> fetchProductList() async {
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
-    throw Exception('Failed to load products');
+    throw Exception('Failed to load categories');
   }
 }
 
@@ -77,7 +77,7 @@ class _ManageProductsWidgetState extends State<ManageProductsWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Products'),
+        title: const Text('Categories'),
         actions: Util.loggedUser()["role_id"].toString() == "1" ? <Widget>[
           IconButton(
             icon: const Icon(
@@ -210,7 +210,7 @@ class _AddProductWidgetState extends State<AddProductWidget> {
     },
     child: Scaffold(
       appBar: AppBar(
-        title: const Text('Add Product'),
+        title: const Text('Add Category'),
       ),
       body: Form(
           child: ListView(
@@ -222,12 +222,12 @@ class _AddProductWidgetState extends State<AddProductWidget> {
                 controller: productCode,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Product Code *',
+                  labelText: 'Category Code *',
                 ),
                 style: const TextStyle(fontSize: 16),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Enter the product code';
+                    return 'Enter the category code';
                   }
                   return null;
                 },
@@ -345,7 +345,7 @@ class _DetailProductWidgetState extends State<DetailProductWidget> {
                     controller: productCode,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Product Code *',
+                      labelText: 'Category Code *',
                     ),
                     style: const TextStyle(fontSize: 16),
                     enabled: false,
@@ -424,7 +424,7 @@ Future<Product> createProduct(String productCode, description) async {
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw Exception('Failed to create the product.');
+    throw Exception('Failed to create the category.');
   }
 }
 
@@ -468,6 +468,6 @@ Future<Product> updateProduct(String productCode, description) async {
   } else {
     // If the server did not return a 201 CREATED response,
     // then throw an exception.
-    throw Exception('Failed to update the product.');
+    throw Exception('Failed to update the category.');
   }
 }

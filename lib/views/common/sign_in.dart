@@ -37,6 +37,11 @@ class _SignInWidgetState extends State<SignInWidget> {
       return;
     }
 
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => Util.isRunningOnWeb() ? WebHomeWidget() : MobileHomeWidget()),
+    // );
+
     authService.login({
       "username" : nameController.text,
       "password" : passwordController.text

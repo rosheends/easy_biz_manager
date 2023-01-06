@@ -8,6 +8,7 @@ import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
 import '../../manage_clients.dart';
+import '../../send_attachment.dart';
 import '../../utility/constants.dart';
 import '../../utility/util.dart';
 import 'mobile_invoices.dart';
@@ -64,6 +65,15 @@ class MobileHomeWidget extends StatelessWidget {
             title: 'Manage Expenses',
             icon: Icons.paid_rounded,
             screen: const ManageExpenseWidget()),
+      ];
+    }
+
+    if(["1,2,4"].contains(Util.loggedUser()["role_id"].toString())){
+      items = [
+        Item(
+            title: 'Notify payments',
+            icon: Icons.payment,
+            screen: const SendAttachmentWidget()),
       ];
     }
 
