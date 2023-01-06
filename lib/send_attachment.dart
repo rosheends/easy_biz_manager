@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:easy_biz_manager/utility/util.dart';
+import 'package:easy_biz_manager/views/mobile/mobile_home.dart';
+import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,9 +28,9 @@ class _SendAttachmentWidgetState extends State<SendAttachmentWidget> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            buildTextField(title: 'To', controller: controllerTo),
+            buildTextField(title: 'To', controller: TextEditingController(text: "rosheen.ds@gmail.com")),
             const SizedBox(height:16),
-            buildTextField(title: 'Subject', controller: controllerSubject),
+            buildTextField(title: 'Subject', controller: TextEditingController(text: "Payment Confirmation")),
             const SizedBox(height:16),
             buildTextField(title: 'Message', controller: controllerMessage, maxLines: 8),
             const SizedBox(height:32),
@@ -42,27 +45,17 @@ class _SendAttachmentWidgetState extends State<SendAttachmentWidget> {
               //   message: controllerMessage.text,
               // ),
               onPressed: () async{
-                String email = Uri.encodeComponent(controllerTo.text);
-                String subject = Uri.encodeComponent(controllerSubject.text);
+                String email = Uri.encodeComponent('rosheen.ds@gmail.com');
+                String subject = Uri.encodeComponent('Payment Confirmation');
                 String body = Uri.encodeComponent(controllerMessage.text);
                 Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
                 if (await canLaunchUrl(mail)){
                   await launchUrl(mail);
                 }else{
-                  throw "Error occured sending an email";
+                  throw "Error occurred sending an email";
                 }
+                Util.routeNavigatorPush(context, MobileHomeWidget(), WebHomeWidget());
               },
-              // onPressed: () async{
-              //   final String email = controllerTo.text;
-              //   final String subject = controllerSubject.text;
-              //   final String body = controllerMessage.text;
-              //   String mail = 'mailto:$email?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}';
-              //   if (await canLaunchUrl(mail)){
-              //     await launchUrl(mail);
-              //   }else{
-              //     throw "Error occured sending an email";
-              //   }
-              // },
             ),
           ],
         )
@@ -84,23 +77,10 @@ class _SendAttachmentWidgetState extends State<SendAttachmentWidget> {
         maxLines: maxLines,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
+          hintText: "Please attach your receipt for the payment confirmation",
         ),
       ),
     ],
   );
-
-  Future launchEmail({
-  required String toEmail,
-    required String subject,
-    required String message,
-}) async {
-    Uri mail =
-        Uri.parse("mailto:$toEmail?subject=$subject&body=$message");
-    if (await launchUrl(mail)){
-      // email app opened
-    }else{
-      //email app is not opened
-    }
-  }
 
 }

@@ -41,6 +41,11 @@ class InvoiceService {
     return service.get(Util.getServiceHost() + InvoiceEndpoints.getAll);
   }
 
+  Future<dynamic> getClientInvoices(String id) async {
+    ExecutorService service = ExecutorService();
+    return service.get(Util.getServiceHost() + "${InvoiceEndpoints.getClientInvAll}/$id");
+  }
+
   Future<dynamic> createInvoice(Map<String, dynamic> params) async{
     ExecutorService service = ExecutorService();
     return service.post(Util.getServiceHost() + InvoiceEndpoints.post, params);

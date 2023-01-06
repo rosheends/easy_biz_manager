@@ -5,5 +5,6 @@ class InvoiceEndpoints {
   static const String post = "management/invoice/";
   static const String putInvId = "management/invoice/expense/inv/{id}";
   static const String putInvStatus = "management/invoice/{id}";
+  static const String getClientInvAll = "management/invoice/client";
 
 }

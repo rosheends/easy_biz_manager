@@ -81,6 +81,7 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
   Future<dynamic>? _futureInvoice;
   Future<dynamic>? _futureExpenceInvId;
   bool _isBtnEnabled = false;
+  Future<dynamic>? _futureInvClient;
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +155,7 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
                     controller: totAmountCtrl,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Total Amount',
+                      labelText: 'Total Amount including Tax',
                     ),
                     style: const TextStyle(fontSize: 16),
                     enabled: false,
@@ -174,10 +175,10 @@ class _GenerateInvoiceWidgetState extends State<GenerateInvoiceWidget> {
                             borderRadius: BorderRadius.circular(20.0)),
                       ),
                       onPressed: () {
-                        //var temp = userService.getProjClient(_projId);
+                        //_futureInvClient = userService.getProjClient(_projId);
                         setState(() {
                           _futureInvoice = invService.createInvoice({
-                            "user_id": 1, //temp[0]["user_id"].toString(),
+                            "user_id": 6, //temp[0]["user_id"].toString(),
                             "invoice_date": DateTime.now().toString(),
                             "due_date": DateTime.now().toString(),
                             "late_fee": 0,

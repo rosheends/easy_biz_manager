@@ -52,7 +52,7 @@ class AppDrawerWidget extends StatelessWidget {
               leading: const Icon(Icons.ballot_rounded),
               iconColor: Colors.blue,
               horizontalTitleGap: 0,
-              title: const Text('Products'),
+              title: const Text('Categories'),
               onTap: () {
                 Util.routeNavigatorPush(context, ManageProductsWidget(), ManageProductsWidget());
               },

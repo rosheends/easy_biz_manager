@@ -4,10 +4,12 @@ import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/reporting.dart';
 import 'package:easy_biz_manager/views/web/web_invoices.dart';
 import 'package:flutter/material.dart';
+import '../../client_invoices.dart';
 import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
 import '../../manage_clients.dart';
+import '../../send_attachment.dart';
 import '../../utility/constants.dart';
 import '../../utility/util.dart';
 import '../common/sign_up.dart';
@@ -64,6 +66,20 @@ class WebHomeWidget extends StatelessWidget {
             title: 'Manage Expenses',
             icon: Icons.paid_rounded,
             screen: const ManageExpenseWidget()),
+      ];
+    }
+
+    if(["4"].contains(Util.loggedUser()["role_id"].toString())){
+      items = [
+        Item(
+            title: 'View Invoices',
+            icon: Icons.payment,
+            screen: const GenerateClientInvoiceWidget()),
+        Item(
+            title: 'Notify payments',
+            icon: Icons.payment,
+            screen: const SendAttachmentWidget()),
+
       ];
     }
 

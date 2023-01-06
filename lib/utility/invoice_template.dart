@@ -10,12 +10,17 @@ Future<Uint8List> generateInvoice(Map<String, dynamic> data) async {
   List<dynamic> expenses = data["expenses"];
   List<Product> products = [];
   int num = 1;
-  expenses.forEach((element) {
-    if (element["budget"] != null){
-      double? budget = double.tryParse(element["budget"]);
-      products.add(Product(num.toString().padLeft(4, '0'), element["project_name"], budget!, 1));
-    }
+  if (data["budget"] != null){
+    double? budget = double.tryParse(data["budget"]);
+    products.add(Product(num.toString().padLeft(4, '0'), data["budget"], budget!, 1));
     num++;
+  }
+  expenses.forEach((element) {
+    // if (element["budget"] != null){
+    //   double? budget = double.tryParse(element["budget"]);
+    //   products.add(Product(num.toString().padLeft(4, '0'), element["project_name"], budget!, 1));
+    // }
+    //num++;
     products.add(Product(num.toString().padLeft(4, '0'), element["description"], element["amount"], 1));
     num++;
   });

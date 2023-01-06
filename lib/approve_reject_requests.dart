@@ -172,7 +172,8 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
                       "exp_status": "Approved",
                       "id": _expList![index]['id'].toString(),
                     });
-                    _getExpData();
+                    //_getExpData();
+
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(builder: (context) => const ManageExpenseWidget()),
@@ -184,8 +185,12 @@ class _ExpenseRequestsWidgetState extends State<ExpenseRequestsWidget> {
                       "exp_status": "Rejected",
                       "id": _expList![index]['id'].toString(),
                     });
-                    _getExpData();
+
+                   // _getExpData();
                   }
+                  setState(() {
+                    _getExpData();
+                  });
                 },
               ),
 

@@ -194,7 +194,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add User'),
+        title: const Text('Add Expense'),
       ),
       body: Form(
           key: _formKey,

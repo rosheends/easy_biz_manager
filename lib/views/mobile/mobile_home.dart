@@ -4,6 +4,7 @@ import 'package:easy_biz_manager/manage_invoices.dart';
 import 'package:easy_biz_manager/reporting.dart';
 import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:flutter/material.dart';
+import '../../client_invoices.dart';
 import '../../manage_projects.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app_drawer.dart';
@@ -68,12 +69,26 @@ class MobileHomeWidget extends StatelessWidget {
       ];
     }
 
-    if(["1,2,4"].contains(Util.loggedUser()["role_id"].toString())){
+    // if(["1","2"].contains(Util.loggedUser()["role_id"].toString())){
+    //   items = [
+    //     Item(
+    //         title: 'Notify payments',
+    //         icon: Icons.payment,
+    //         screen: const SendAttachmentWidget()),
+    //   ];
+    // }
+
+    if(["4"].contains(Util.loggedUser()["role_id"].toString())){
       items = [
+        Item(
+            title: 'View Invoices',
+            icon: Icons.payment,
+            screen: const GenerateClientInvoiceWidget()),
         Item(
             title: 'Notify payments',
             icon: Icons.payment,
             screen: const SendAttachmentWidget()),
+
       ];
     }
 
