@@ -47,6 +47,7 @@ dependencies:
   flutter_checkbox_dialog: ^0.0.1
   searchable_listview: ^2.1.1
   url_launcher: ^6.1.5
+  syncfusion_flutter_charts: ^20.4.42
 
 dev_dependencies:
   flutter_test:
