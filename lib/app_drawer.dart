@@ -10,6 +10,7 @@ import 'package:easy_biz_manager/views/common/sign_up.dart';
 import 'package:easy_biz_manager/views/mobile/mobile_invoices.dart';
 import 'package:easy_biz_manager/views/web/web_home.dart';
 import 'package:easy_biz_manager/views/web/web_invoices.dart';
+import 'package:easy_biz_manager/views/web/web_report.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'manage_projects.dart';
@@ -141,7 +142,7 @@ class AppDrawerWidget extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const GenerateInvoiceWidget()),
+                  MaterialPageRoute(builder: (context) => ReportPage()),
                 );
               },
             ),

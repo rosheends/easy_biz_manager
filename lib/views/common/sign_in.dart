@@ -96,6 +96,10 @@ class _SignInWidgetState extends State<SignInWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    nameController.text = "rosh.ds@gmail.com";
+    passwordController.text = "password";
+
     return Form(
       key: _formKey,
      // padding: const EdgeInsets.all(10),
