@@ -179,13 +179,57 @@ class _MobileInvoiceWidgetState extends State<MobileInvoiceWidget> {
                           minimumSize: const Size(30, 30),
                         ),
                         onPressed: ()  {
-                          setState(() {
-                            _futureInvExp = service.updateInvStatus({
-                              "id": data['id'].toString(), //temp[0]["user_id"].toString(),
-                              "payment_status": "Paid",
-                            });
-                          });
-                          _getData();
+                          //showAlertDialog(context);
+
+                          // set up the buttons
+                          Widget cancelButton = TextButton(
+                            child: const Text("Cancel"),
+                            onPressed:  () {
+                              //Navigator.pop(_);
+                              Navigator.of(context, rootNavigator: true).pop('alert');
+                            },
+                          );
+                          Widget continueButton = TextButton(
+                            child: const Text("Yes"),
+                            onPressed:  () {
+                              //Navigator.of(context, rootNavigator: true).pop('alert');
+                              setState(() {
+                                _futureInvExp = service.updateInvStatus({
+                                  "id": data['id'].toString(), //temp[0]["user_id"].toString(),
+                                  "payment_status": "Paid",
+                                });
+                                _getData();
+                              });
+                              //_getData();
+                              //Navigator.of(context, rootNavigator: true).pop('alert');
+                            },
+                          );
+
+                          // set up the AlertDialog
+                          AlertDialog alert = AlertDialog(
+                            title: const Text("Confirmation"),
+                            content: const Text("Are you sure you want to mark this payment as paid?"),
+                            actions: [
+                              cancelButton,
+                              continueButton,
+                            ],
+                          );
+
+                          // show the dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return alert;
+                            },
+                          );
+
+                          // setState(() {
+                          //   _futureInvExp = service.updateInvStatus({
+                          //     "id": data['id'].toString(), //temp[0]["user_id"].toString(),
+                          //     "payment_status": "Paid",
+                          //   });
+                          // });
+                          //_getData();
 
                         },
                         child: const Text('Mark as Paid', style: TextStyle(fontSize: 10)),

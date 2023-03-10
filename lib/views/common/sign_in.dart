@@ -97,8 +97,8 @@ class _SignInWidgetState extends State<SignInWidget> {
   @override
   Widget build(BuildContext context) {
 
-    nameController.text = "rosh.ds@gmail.com";
-    passwordController.text = "password";
+   // nameController.text = "rosh.ds@gmail.com";
+   // passwordController.text = "password";
 
     return Form(
       key: _formKey,
@@ -296,23 +296,23 @@ class _SignInWidgetState extends State<SignInWidget> {
                     // call validate function
                   },
                 )),
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ForgotPasswordWidget()),
-                    );
-                  },
-                  child: const Text(
-                    'Forgot Password',style: TextStyle(fontSize: 15),
-                  ),
-                ),
-              ),
-            ),
+            // Container(
+            //   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            //   child: Align(
+            //     alignment: Alignment.centerRight,
+            //     child: TextButton(
+            //       onPressed: () {
+            //         Navigator.push(
+            //           context,
+            //           MaterialPageRoute(builder: (context) => const ForgotPasswordWidget()),
+            //         );
+            //       },
+            //       child: const Text(
+            //         'Forgot Password',style: TextStyle(fontSize: 15),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             // Row(
             //   mainAxisAlignment: MainAxisAlignment.center,
             //   children: <Widget>[

@@ -188,6 +188,8 @@ class _AddProjectAssignmentState extends State<AddProjectAssignment> {
   late Map<String, bool> userArr;
   Future<dynamic>? _futureAssignment;
   AssignUserService assignService = AssignUserService();
+  late List<dynamic>? _unAssignedSearchUserList = [];
+  TextEditingController _textCtrl = TextEditingController();
 
 
   @override
@@ -208,17 +210,27 @@ class _AddProjectAssignmentState extends State<AddProjectAssignment> {
         if(userElement["user_id"] == element["id"]){
           isUserFound = true;
         }
-
       });
 
       if(!isUserFound){
-        _unAssignedUserList?.add(element);
+        _unAssignedSearchUserList?.add(element);
+        _unAssignedUserList = _unAssignedSearchUserList;
+
       }
 
     });
 
     setState(() {
       loading = false;
+    });
+  }
+
+  onItemChanged(String value) {
+    setState(() {
+      //_unAssignedSearchUserList = _unAssignedUserList?.where((element) => element['role_desc'].toLowerCase().contains(value.toLowerCase()) ||
+        //  element['first_name'].toLowerCase().contains(value.toLowerCase())).toList();
+      _unAssignedUserList = _unAssignedSearchUserList?.where((element) => element['role_desc'].toLowerCase().contains(value.toLowerCase()) ||
+          element['email'].toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -244,7 +256,19 @@ class _AddProjectAssignmentState extends State<AddProjectAssignment> {
             ),
           ],
         ),
-        body: Form(
+        body: Column(children: <Widget>[
+        Padding(
+        padding: const EdgeInsets.all(12.0),
+      child: TextField(
+        controller: _textCtrl,
+        decoration: InputDecoration(
+          hintText: 'Search by User Name / User Role',
+        ),
+        onChanged: onItemChanged,
+      ),
+    ),
+      Expanded(
+      //  Form(
             child: ListView.builder(
           itemCount: _unAssignedUserList!.length,
           itemBuilder: (context, index) {
@@ -272,7 +296,8 @@ class _AddProjectAssignmentState extends State<AddProjectAssignment> {
             );
           },
         ),
-        ));
+        )
+      ]));
   }
 
   Future<bool> delete(String projectId, String userId) async {
