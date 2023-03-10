@@ -28,7 +28,7 @@ class _SendAttachmentWidgetState extends State<SendAttachmentWidget> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            buildTextField(title: 'To', controller: TextEditingController(text: "rosheen.ds@gmail.com")),
+            buildTextField(title: 'To', controller: TextEditingController(text: "test@gmail.com")),
             const SizedBox(height:16),
             buildTextField(title: 'Subject', controller: TextEditingController(text: "Payment Confirmation")),
             const SizedBox(height:16),
@@ -45,7 +45,7 @@ class _SendAttachmentWidgetState extends State<SendAttachmentWidget> {
               //   message: controllerMessage.text,
               // ),
               onPressed: () async{
-                String email = Uri.encodeComponent('rosheen.ds@gmail.com');
+                String email = Uri.encodeComponent('test@gmail.com');
                 String subject = Uri.encodeComponent('Payment Confirmation');
                 String body = Uri.encodeComponent(controllerMessage.text);
                 Uri mail = Uri.parse("mailto:$email?subject=$subject&body=$body");
